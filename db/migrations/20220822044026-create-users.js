@@ -31,8 +31,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull : false,
       },
-      token : {
+      roles : {
         type : Sequelize.STRING,
+        allowNull : false
+      },
+      token : {
+        type : Sequelize.TEXT,
         length : 500
       },
       status : {

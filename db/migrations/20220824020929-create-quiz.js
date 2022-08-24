@@ -8,21 +8,28 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-     await queryInterface.createTable('roles', {
-      id: {
+    await queryInterface.createTable('quiz', {
+      id : {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      roles_code: {
+      title : {
         allowNull : false,
-        type: Sequelize.STRING
+        type : Sequelize.STRING
       },
-      roles_description: {
+      course_id : {
         allowNull : false,
-        type: Sequelize.STRING,
-        length : 100
+        type : Sequelize.INTEGER
+      },
+      quiz_time : {
+        allowNull : false,
+        type : Sequelize.TIME
+      },
+      number_of_question : {
+        allowNull : false,
+        type : Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -42,6 +49,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('roles');
+     await queryInterface.dropTable('quiz');
   }
 };
