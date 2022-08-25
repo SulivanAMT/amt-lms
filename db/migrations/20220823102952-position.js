@@ -15,6 +15,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      position_code : {
+        allowNull : false,
+        type : Sequelize.STRING
+      },
       position_name : {
         allowNull : false,
         type : Sequelize.STRING
@@ -31,6 +35,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    }).then(() => {
+      queryInterface.addIndex('position', ['position_code']);
     });
   },
 

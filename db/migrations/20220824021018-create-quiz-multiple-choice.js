@@ -17,7 +17,7 @@ module.exports = {
       },
       quiz_question_id : {
         allowNull : false,
-        type : Sequelize.STRING
+        type : Sequelize.INTEGER
       },
       choice_name : {
         allowNull : false,

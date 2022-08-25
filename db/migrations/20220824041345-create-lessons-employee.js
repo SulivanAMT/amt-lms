@@ -15,7 +15,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      lesson_content_id : {
+      lesson_id : {
         allowNull : false,
         type : Sequelize.INTEGER
       },

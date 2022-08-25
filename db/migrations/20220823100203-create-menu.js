@@ -8,24 +8,28 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('exams_employee_detail', {
-      id : {
-        allowNull : false, 
+    await queryInterface.createTable('menu', {
+      id: {
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      exam_employee_id : {
+      menu_name: {
         allowNull : false,
-        type : Sequelize.INTEGER
+        type: Sequelize.STRING
       },
-      answer_of_question : {
+      menu_url: {
         allowNull : false,
-        type : Sequelize.STRING
+        type: Sequelize.STRING
       },
-      point : {
+      menu_icon: {
         allowNull : false,
-        type : Sequelize.FLOAT
+        type: Sequelize.STRING
+      },
+      modul_id: {
+        allowNull : false,
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -45,6 +49,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-     await queryInterface.dropTable('exams_employee_detail');
+     await queryInterface.dropTable('menu');
   }
 };

@@ -2,18 +2,26 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('department', {
+    await queryInterface.createTable('organization', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      dept_cpde: {
+      organization_code: {
         allowNull : false,
         type: Sequelize.STRING
       },
-      dept_description: {
+      organization_name: {
+        allowNull : false,
+        type: Sequelize.STRING
+      },
+      organization_code_head: {
+        allowNull : false,
+        type: Sequelize.STRING
+      },
+      organization_type: {
         allowNull : false,
         type: Sequelize.STRING
       },
@@ -25,6 +33,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    }).then(() => {
+        queryInterface.addIndex('organization', ['organization_code']);
     });
     /**
      * Add altering commands here.
@@ -41,5 +51,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
+    await queryInterface.dropTable('organization');
   }
 };

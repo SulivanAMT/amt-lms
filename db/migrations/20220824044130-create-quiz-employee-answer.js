@@ -15,6 +15,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      quiz_employee_id : {
+        allowNull : false,
+        type : Sequelize.INTEGER
+      },
       quiz_question_id : {
         allowNull : false,
         type : Sequelize.INTEGER

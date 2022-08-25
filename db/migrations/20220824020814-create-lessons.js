@@ -17,7 +17,6 @@ module.exports = {
       },
       course_id : {
         allowNull: false,
-        primaryKey: true,
         type: Sequelize.INTEGER
       },
       lesson_title : {

@@ -32,6 +32,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    }).then(() =>{
+        queryInterface.addIndex('roles', ['roles_code']);
     });
   },
 
@@ -44,4 +46,4 @@ module.exports = {
      */
     await queryInterface.dropTable('roles');
   }
-};
+};  

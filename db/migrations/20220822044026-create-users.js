@@ -8,6 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      nik : {
+        allowNull : false,
+        type : Sequelize.STRING
+      },
       name: {
         allowNull : false,
         type: Sequelize.STRING
@@ -27,7 +31,7 @@ module.exports = {
         type: Sequelize.STRING,
         length : 255
       },
-      dept_code: {
+      organization_code: {
         type: Sequelize.STRING,
         allowNull : false,
       },
@@ -42,9 +46,9 @@ module.exports = {
       status : {
         type : Sequelize.ENUM('Actived', 'Deactived')
       },
-      position_id : {
+      position_code : {
         allowNull : false,
-        type : Sequelize.INTEGER
+        type : Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

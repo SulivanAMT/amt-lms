@@ -15,7 +15,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      roles_code : {
+      roles : {
         allowNull : false,
         type : Sequelize.STRING
       },
