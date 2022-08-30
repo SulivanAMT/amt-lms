@@ -3,15 +3,10 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.createTable('organization', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
       organization_code: {
         allowNull : false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        primaryKey : true
       },
       organization_name: {
         allowNull : false,

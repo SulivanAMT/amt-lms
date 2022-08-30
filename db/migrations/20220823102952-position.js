@@ -9,19 +9,14 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
     await queryInterface.createTable('position', {
-      id : {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
       position_code : {
         allowNull : false,
-        type : Sequelize.STRING
+        type : Sequelize.STRING,
+        primaryKey : true
       },
       position_name : {
         allowNull : false,
-        type : Sequelize.STRING
+        type : Sequelize.STRING,
       },
       position_description : {
         allowNull : false,
@@ -35,8 +30,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    }).then(() => {
-      queryInterface.addIndex('position', ['position_code']);
     });
   },
 

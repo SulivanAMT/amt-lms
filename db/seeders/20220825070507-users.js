@@ -37,8 +37,8 @@ module.exports = {
         updatedAt : new Date(),
       },
       {
-        name : 'Anton Nurhadiyanto',
-        email : 'johndoe1@amt-it.com',
+        name : 'John Doe 2',
+        email : 'johndoe2@amt-it.com',
         phone_number : '12345',
         password : '$2a$12$T76jQtzqkmiCte7pA9PaF.0LjmK2YX3xCrADGXxPRRhXybILubkqS',
         organization_code : 'BD',
@@ -49,8 +49,8 @@ module.exports = {
         updatedAt : new Date(),
       },
       {
-        name : 'John Doe 2',
-        email : 'johndoe2@amt-it.com',
+        name : 'John Doe 3',
+        email : 'johndoe3@amt-it.com',
         phone_number : '12345',
         password : '$2a$12$T76jQtzqkmiCte7pA9PaF.0LjmK2YX3xCrADGXxPRRhXybILubkqS',
         organization_code : 'HR',
@@ -61,8 +61,8 @@ module.exports = {
         updatedAt : new Date(),
       },
       {
-        name : 'John Doe 3',
-        email : 'johndoe2@amt-it.com',
+        name : 'John Doe 4',
+        email : 'johndoe4@amt-it.com',
         phone_number : '12345',
         password : '$2a$12$T76jQtzqkmiCte7pA9PaF.0LjmK2YX3xCrADGXxPRRhXybILubkqS',
         organization_code : 'HR',

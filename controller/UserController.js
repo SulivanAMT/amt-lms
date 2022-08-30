@@ -1,28 +1,43 @@
-import Users from "../db/models/Users.js";
+import { repoUserById, repoGetUser, repoCreateUser, repoUpdateUser, repoDeleteUser } from "../repositories/UserRepository.js";
 import bcrypt from "bcrypt";
 
 export const getUserById = async(req, res) => {
     try {
-        const users = await Users.findByPk(req.params.id, {
-            attributes : ['id', 'name','email', 'dept_code','createdAt', 'updatedAt']
-        });
+        const users = await repoUserById(req.params.id);
         res.json({
-            is_error : false,
-            data : users
-        })
+            data : {
+                nik : users.nik,
+                name : users.name,
+                phone_number : users.phone_number,
+                status : users.status,
+                createdAt : users.createdAt,
+                updatedAt : users.updatedAt,
+                role : {
+                    roles_code : users.role.roles,
+                    roles_name : users.role.roles_description
+                },
+                organization : {
+                    organization_code : users.organization.organization_code,
+                    organization_name : users.organization.organization_name
+                },
+                position : {
+                    position_code : users.position.position_code,
+                    position_name : users.position.position_name
+                },
+                is_error : false,
+            }
+        });
     }catch(err){
         res.json({
+            message : err,
             is_error : true,
-            message : err
         });
     }
 }
 
 export const getUser = async(req, res) => {
     try {
-        const users = await Users.findAll({
-            attributes : ['id', 'name','email', 'dept_code','createdAt', 'updatedAt']
-        });
+        const users = await repoGetUser();
         res.status(200).json({
             data : users,
             is_error : false
@@ -39,21 +54,26 @@ export const addUser  = async(req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(req.body.password, salt);
-        await Users.create({
+        const data = {
             name : req.body.name,
             email : req.body.email,
             dept_code : req.body.dept_code,
             phone_number : req.body.phone_number,
-            password :  hashPassword
-        });
+            password :  hashPassword,
+            status : req.body.status,
+            position_code : req.body.position,
+            organization : req.body.organization,
+            roles : req.body.roles
+        }
+        await repoCreateUser(data);
         res.status(200).json({
-            is_error : false,
-            message : "User berhasil dicreate"
+            message : "User berhasil dicreate",
+            is_error : false
         });
     } catch {
         res.status(200).json({
-            is_error : true,
-            message : err
+            message : err,
+            is_error : true
         });
     }
 }
@@ -65,6 +85,9 @@ export const updateUser = async(req, res) => {
             email : req.body.email,
             dept_code : req.body.dept_code,
             phone_number : req.body.phone_number,
+            position_code : req.body.position,
+            organization : req.body.organization,
+            roles : req.body.roles
         };
         if(req.body.password != null){
             const salt = await bcrypt.genSalt(10);
@@ -74,38 +97,38 @@ export const updateUser = async(req, res) => {
             }
             updatedData = Object.assign(updatedData, updatePassword);  
         }
-        await Users.update(updatedData, {
-            where : {
-                id : req.params.id
-            }
-        })
+        await repoUpdateUser(updatedData, req.params.id);
         res.json({
-            is_error : false,
-            message : "User berhasil di update!"
+            message : "User berhasil di update!",
+            is_error : false
         });
     } catch(err){
         res.json({
-            is_error : true,
-            message : err
+            message : err,
+            is_error : true
         });
     }
 }
 
 export const deleteUser = async(req, res) => {
     try {
-        await Users.destroy({
-            where : {
-                id : req.params.id
-            }
-        });
+        await repoDeleteUser(req.params.id);
         res.json({
-            is_error : false,
-            message : "User berhasil di hapus!"
+            message : "User berhasil di hapus!",
+            is_error : false
         });
     } catch(err){
         res.json({
-            is_error : true,
-            message : err
+            message : err,
+            is_error : true
         });
     }
+}
+
+export const getListOfMenu = async(req, res) => {
+
+}
+
+export const getPermission = async(req, res) => {
+    
 }

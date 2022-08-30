@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { repoGetByToken } from "../repositories/UserRepository.js";
 
 export const verifyToken = (req, res, next) => {
     if(req.headers.authorization == null){
@@ -17,5 +18,5 @@ export const verifyToken = (req, res, next) => {
             return res.status(403).json({"message" : "Unauthorized"});
         }
         next();
-    })
+    });
 }

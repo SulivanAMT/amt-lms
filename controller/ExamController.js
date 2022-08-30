@@ -1,7 +1,14 @@
 import Exams from "../db/models/Exams.js";
 
-export const addExam = async(req, res) => {
+export const createExam = async(req, res) => {
+    try {
 
+    } catch(err) {
+        res.json({
+            message : err,
+            is_error : true
+        });
+    }
 }
 
 export const updateExam = async(req, res) => {

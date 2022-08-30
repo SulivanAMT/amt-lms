@@ -9,13 +9,8 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
      await queryInterface.createTable('roles', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
+      roles: {
         primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      roles_code: {
         allowNull : false,
         type: Sequelize.STRING
       },
@@ -32,8 +27,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    }).then(() =>{
-        queryInterface.addIndex('roles', ['roles_code']);
     });
   },
 

@@ -1,7 +1,9 @@
 import { Sequelize } from "sequelize";
 import db from "../../config/database.js";
-import Roles from "./Roles.js";
 const { DataTypes } = Sequelize;
+import Roles from "./Roles.js";
+import Organization from "./Organization.js";
+import Position from "./Position.js";
  
 const Users = db.define('users', {
   name: {
@@ -16,8 +18,11 @@ const Users = db.define('users', {
   password: {
     type: DataTypes.STRING,
   },
-  dept_code: {
+  organization_code: {
     type: DataTypes.STRING,
+  },
+  roles : {
+    type : DataTypes.STRING
   },
   token : {
     type : DataTypes.STRING,
@@ -25,7 +30,25 @@ const Users = db.define('users', {
 },{
   freezeTableName: true
 });
-
-Users.hasOne(Roles);
  
+Users.belongsTo(Roles, {
+  foreignKey : 'roles'
+});
+
+Roles.hasMany(Users, {
+  foreignKey : 'roles'
+});
+
+Users.belongsTo(Roles, {
+  foreignKey : 'roles'
+});
+
+Users.belongsTo(Organization, {
+  foreignKey : 'organization_code'
+});
+
+Users.belongsTo(Position, {
+  foreignKey : 'position_code'
+})
+
 export default Users;

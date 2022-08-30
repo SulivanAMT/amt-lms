@@ -1,5 +1,5 @@
-import db from '../config/database.js';
-import { Sequelize } from "sequelize";
+const db = require('../../config/database.js');
+const { Sequelize } = require("sequelize");
 
 const ExamsMultipleChoice = db.define('exams_multiple_choice', {
     exam_question_id : {
@@ -13,4 +13,4 @@ const ExamsMultipleChoice = db.define('exams_multiple_choice', {
     },
 })
 
-export default ExamsMultipleChoice;
+module.exports = ExamsMultipleChoice;

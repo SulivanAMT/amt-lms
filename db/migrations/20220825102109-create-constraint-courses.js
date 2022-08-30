@@ -8,17 +8,17 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.addConstraint('roles_management', {
-      fields : ['roles'],
+     await queryInterface.addConstraint('courses', {
+      fields : ['organization_code'],
       type : 'foreign key',
-      name : 'FK_RolesManagement_Roles',
+      name : 'FK_Courses_Organization',
       references : {
-        table : 'roles',
-        field : 'roles'
+        table : 'organization',
+        field : 'organization_code'
       },
       onDelete : 'no action',
       onUpdate : 'no action'
-    })
+    });
   },
 
   async down (queryInterface, Sequelize) {
@@ -28,6 +28,5 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.removeConstraint('roles_management', 'FK_RolesManagement_Roles');
   }
 };

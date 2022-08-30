@@ -1,5 +1,5 @@
-import db from '../config/database.js';
-import { Sequelize } from "sequelize";
+const db = require('../../config/database.js');
+const { Sequelize } = require("sequelize");
 
 const Exams = db.define('exams', {
     title : {
@@ -14,6 +14,9 @@ const Exams = db.define('exams', {
     number_of_question : {
         type : Sequelize.INTEGER
     },
+    created_by : {
+        type : Sequelize.STRING
+    },
 })
 
-export default Exams;
+module.exports = Exams;

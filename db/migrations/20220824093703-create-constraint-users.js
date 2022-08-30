@@ -14,7 +14,7 @@ module.exports = {
       name : 'FK_Users_Roles',
       references : {
         table : 'roles',
-        field : 'roles_code'
+        field : 'roles'
       },
       onDelete : 'no action',
       onUpdate : 'no action'

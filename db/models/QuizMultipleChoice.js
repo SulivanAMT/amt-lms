@@ -1,4 +1,4 @@
-import db from '../config/database.js';
+import db from '../../config/database.js';
 import { Sequelize } from "sequelize";
 
 const LessonsDetail = db.define('lessons', {

@@ -13,31 +13,31 @@ module.exports = {
     */
     await queryInterface.bulkInsert('roles', [
       {
-        roles_code : 'ADM',
+        roles : 'ADM',
         roles_description : 'Administrator',
         createdAt : new Date(),
         updatedAt : new Date()
       },
       {
-        roles_code : 'CBT',
+        roles : 'CBT',
         roles_description : 'Contributor',
         createdAt : new Date(),
         updatedAt : new Date()
       },
       {
-        roles_code : 'SPV',
+        roles : 'SPV',
         roles_description : 'Supervisor',
         createdAt : new Date(),
         updatedAt : new Date()
       },
       {
-        roles_code : 'CMO',
+        roles : 'CMO',
         roles_description : 'User',
         createdAt : new Date(),
         updatedAt : new Date()
       },
       {
-        roles_code : 'HRD',
+        roles : 'HRD',
         roles_description : 'Human Resources SPV',
         createdAt : new Date(),
         updatedAt : new Date()

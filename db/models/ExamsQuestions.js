@@ -1,5 +1,5 @@
-import db from '../config/database.js';
-import { Sequelize } from "sequelize";
+const db = require('../../config/database.js');
+const { Sequelize } = require("sequelize");
 
 const ExamsQuestions = db.define('lessons', {
     lesson_title : {
@@ -7,4 +7,4 @@ const ExamsQuestions = db.define('lessons', {
     },
 })
 
-export default ExamsQuestions;
+module.exports = ExamsQuestions;
