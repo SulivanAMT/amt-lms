@@ -23,6 +23,10 @@ module.exports = {
         allowNull : false,
         type : Sequelize.STRING
       },
+      question_number : {
+        allowNull : false,
+        type : Sequelize.INTEGER
+      },
       answer_of_question : {
         allowNull : false,
         type : Sequelize.STRING
@@ -30,9 +34,6 @@ module.exports = {
       question_type : {
         allowNull : false,
         type : Sequelize.ENUM('Multiple Choice','Essay')
-      },
-      choice_type : {
-        type : Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

@@ -1,5 +1,7 @@
-const db = require('../../config/database.js');
-const { Sequelize } = require("sequelize");
+import Courses from './Courses.js';
+
+import db from '../../config/database.js';
+import Sequelize from 'sequelize';
 
 const Quiz = db.define('quiz', {
     title : {
@@ -17,6 +19,12 @@ const Quiz = db.define('quiz', {
     created_by : {
         type : Sequelize.STRING
     },
-})
+}, {
+    freezeTableName : true
+});
 
-module.exports = Quiz;
+Quiz.belongsTo(Courses, {
+    foreignKey : 'course_id'
+});
+
+export default Quiz;

@@ -23,7 +23,6 @@ module.exports = {
           type: Sequelize.STRING
         },
         modul_icon: {
-          allowNull : false,
           type: Sequelize.STRING
         },
         is_parent: {

@@ -8,6 +8,10 @@ import { validateCourse, validateDataCourse } from '../validator/Courses.js';
 import { addLesson, createLessonContent, deleteLesson, deleteLessonContent, getLesson, getLessonByCourse, getLessonById, getLessonContentByLesson, updateLesson, updateLessonContent } from '../controller/LessonController.js';
 import { validateDataLesson, validateLesson } from '../validator/Lessons.js';
 import { validateDataLessonDetail, validateLessonDetail } from '../validator/LessonDetail.js';
+import { createExam, createExamQuestion, deleteExam, deleteExamQuestion, getExam, getExamByCourse, getExamById, getQuestionByExam, updateExam, updateExamQuestion } from '../controller/ExamController.js';
+import { validateExam } from '../validator/Exam.js';
+import { createQuiz, createQuizQuestion, deleteQuiz, deleteQuizQuestion, getQuestionByQuiz, getQuiz, getQuizByCourse, getQuizById, updateQuiz, updateQuizQuestion } from '../controller/QuizController.js';
+import { validateQuiz } from '../validator/Quiz.js';
 
 const router = express.Router();
 
@@ -48,14 +52,34 @@ router.put('/lesson_detail/:id', verifyToken, validateLessonDetail, validateData
 router.delete('/lesson_detail/:id', verifyToken, validateDataLessonDetail, deleteLessonContent);
 
 //Exams
-router.get('/exam', verifyToken, getLesson);
-router.get('/exam/:id', verifyToken, validateDataLesson, getLessonById);
-router.put('/exam/:id', verifyToken, validateLesson, validateDataLesson, updateLesson);
-router.post('/exam', verifyToken, validateLesson, validateDataLesson, addLesson);
-router.delete('/exam/:id', verifyToken, validateDataLesson, deleteLesson);
-router.post('/exam/course', verifyToken, validateDataLesson, getLessonByCourse);
+router.get('/exam', verifyToken, getExam);
+router.get('/exam/:id', verifyToken, getExamById);
+router.put('/exam/:id', verifyToken, validateExam, updateExam);
+router.post('/exam', verifyToken, validateExam, createExam);
+router.delete('/exam/:id', verifyToken, deleteExam);
+router.post('/exam/course', verifyToken, validateExam, getExamByCourse);
+
+//Exams Question
+router.put('/exam_question/:id', verifyToken, updateExamQuestion);
+router.post('/exam_question', verifyToken, createExamQuestion);
+router.put('/exam_question/:id', verifyToken, updateExamQuestion);
+router.delete('/exam_question/:id', verifyToken, deleteExamQuestion);
+router.post('/exam_question/exam', verifyToken, getQuestionByExam);
 
 //Quiz
+router.get('/quiz', verifyToken, getQuiz);
+router.get('/quiz/:id', verifyToken, getQuizById);
+router.put('/quiz/:id', verifyToken, validateQuiz, updateQuiz);
+router.post('/quiz', verifyToken, validateQuiz, createQuiz);
+router.delete('/quiz/:id', verifyToken, deleteQuiz);
+router.post('/quiz/course', verifyToken, validateQuiz, getQuizByCourse);
+
+//Quiz Question
+router.put('/quiz_question/:id', verifyToken, updateQuizQuestion);
+router.post('/quiz_question', verifyToken, createQuizQuestion);
+router.put('/quiz_question/:id', verifyToken, updateQuizQuestion);
+router.delete('/quiz_question/:id', verifyToken, deleteQuizQuestion);
+router.post('/quiz_question/quiz', verifyToken, getQuestionByQuiz);
 
 /* Learning, Exam & Contest */
 

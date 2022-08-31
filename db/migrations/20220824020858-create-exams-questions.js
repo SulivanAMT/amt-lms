@@ -23,6 +23,10 @@ module.exports = {
         allowNull : false,
         type : Sequelize.STRING
       },
+      question_number : {
+        allowNull : false,
+        type : Sequelize.INTEGER
+      },
       answer_of_question : {
         allowNull : false,
         type : Sequelize.STRING

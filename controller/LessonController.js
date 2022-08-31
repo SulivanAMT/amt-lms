@@ -154,18 +154,18 @@ export const updateLessonContent = async(req, res) => {
 }
 
 export const deleteLessonContent = async(req, res) => {
-    // try {
+    try {
         await repoDeleteLessonContent(req.params.id);
         return res.json({
             message : 'Lesson content berhasil dihapus',
             is_error : false
         })
-    // } catch(err) {
-    //     return res.json({
-    //         message : err,
-    //         is_error : true
-    //     });
-    // }
+    } catch(err) {
+        return res.json({
+            message : err,
+            is_error : true
+        });
+    }
 }
 
 export const doneLesson = async(req, res) => {

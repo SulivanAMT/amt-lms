@@ -16,7 +16,7 @@ module.exports = {
         table : 'exams_questions',
         field : 'id'
       },
-      onDelete : 'no action',
+      onDelete : 'cascade',
       onUpdate : 'no action'
     });
 

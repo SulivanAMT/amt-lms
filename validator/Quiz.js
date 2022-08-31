@@ -1,7 +1,6 @@
-import Exams from "../db/models/Exams.js";
 import { validationResult, check } from "express-validator";
 
-export const validateExam = [
+export const validateQuiz = [
     check('title')
     .notEmpty()
     .withMessage('Title tidak boleh kosong'),
@@ -10,7 +9,7 @@ export const validateExam = [
     .notEmpty()
     .withMessage('Course tidak boleh kosong'),
 
-    check('exam_time')
+    check('quiz_time')
     .notEmpty()
     .withMessage('Exam time tidak boleh kosong'),
 

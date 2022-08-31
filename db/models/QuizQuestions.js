@@ -1,15 +1,34 @@
 import db from '../../config/database.js';
 import { Sequelize } from "sequelize";
+import QuizMultipleChoice from './QuizMultipleChoice.js';
+import Quiz from './Quiz.js';
 
-const LessonsDetail = db.define('lessons', {
-    lesson_id : {
-        allowNull: false,
-        type: Sequelize.INTEGER
+const QuizQuestions = db.define('quiz_questions', {
+    quiz_id : {
+        type : Sequelize.INTEGER
     },
-    lesson_content : {
-        allowNull : false,
-        type : Sequelize.TEXT
+    name_of_question : {
+        type : Sequelize.STRING
     },
-})
+    question_number : {
+        type : Sequelize.INTEGER
+    },
+    answer_of_question : {
+        type : Sequelize.STRING
+    },
+    question_type : {
+        type : Sequelize.ENUM('Multiple Choice', 'Essay')
+    }
+}, {
+    freezeTableName : true
+});
 
-export default LessonsDetail;
+QuizQuestions.hasMany(QuizMultipleChoice, {
+    foreignKey : 'quiz_question_id'
+});
+
+QuizQuestions.belongsTo(Quiz, {
+    foreignKey : 'quiz_id'
+});
+
+export default QuizQuestions;

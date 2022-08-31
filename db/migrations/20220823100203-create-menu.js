@@ -20,11 +20,9 @@ module.exports = {
         type: Sequelize.STRING
       },
       menu_url: {
-        allowNull : false,
         type: Sequelize.STRING
       },
       menu_icon: {
-        allowNull : false,
         type: Sequelize.STRING
       },
       modul_id: {
