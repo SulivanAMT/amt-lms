@@ -15,11 +15,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      quiz_id : {
+      course_employee_id : {
         allowNull : false,
         type : Sequelize.INTEGER
       },
-      employee_id : {
+      quiz_id : {
         allowNull : false,
         type : Sequelize.INTEGER
       },

@@ -16,7 +16,7 @@ module.exports = {
         table : 'lessons',
         field : 'id'
       },
-      onDelete : 'no action',
+      onDelete : 'cascade',
       onUpdate : 'no action'
     });
   },

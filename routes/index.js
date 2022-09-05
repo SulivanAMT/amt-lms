@@ -1,23 +1,25 @@
-import { login, logout } from '../controller/AuthController.js';
+import { login, logout, refreshToken } from '../controller/AuthController.js';
 import express from 'express';
 import { verifyToken } from '../middleware/VerifyToken.js';
 import { validateDataUser, validateUser } from '../validator/Users.js';
 import { getUser, getUserById, updateUser, deleteUser, addUser } from '../controller/UserController.js';
 import { addCourse, updateCourse, deleteCourse, getCourse, getCourseByOrg, getCourseById } from '../controller/CourseController.js';
 import { validateCourse, validateDataCourse } from '../validator/Courses.js';
-import { addLesson, createLessonContent, deleteLesson, deleteLessonContent, getLesson, getLessonByCourse, getLessonById, getLessonContentByLesson, updateLesson, updateLessonContent } from '../controller/LessonController.js';
+import { addLesson, createLessonContent, deleteLesson, deleteLessonContent, getLesson, getLessonByCourse, getLessonById, getLessonContentById, getLessonContentByLesson, updateLesson, updateLessonContent } from '../controller/LessonController.js';
 import { validateDataLesson, validateLesson } from '../validator/Lessons.js';
 import { validateDataLessonDetail, validateLessonDetail } from '../validator/LessonDetail.js';
 import { createExam, createExamQuestion, deleteExam, deleteExamQuestion, getExam, getExamByCourse, getExamById, getQuestionByExam, updateExam, updateExamQuestion } from '../controller/ExamController.js';
 import { validateExam } from '../validator/Exam.js';
 import { createQuiz, createQuizQuestion, deleteQuiz, deleteQuizQuestion, getQuestionByQuiz, getQuiz, getQuizByCourse, getQuizById, updateQuiz, updateQuizQuestion } from '../controller/QuizController.js';
 import { validateQuiz } from '../validator/Quiz.js';
+import { RoutingLearning } from '../middleware/RoutingLearning.js';
 
 const router = express.Router();
 
 /* Authentication Routes */
 router.post('/auth/login', login);
 router.post('/auth/logout', logout);
+router.post('/auth/refresh_token', refreshToken)
 
 
 /* User Routes */
@@ -46,10 +48,11 @@ router.delete('/lesson/:id', verifyToken, validateDataLesson, deleteLesson);
 router.post('/lesson/course', verifyToken, validateDataLesson, getLessonByCourse);
 
 //Lesson Content
-router.get('/lesson_detail/:lesson', verifyToken, getLessonContentByLesson);
+router.post('/lesson_detail/lesson', verifyToken, getLessonContentByLesson);
 router.post('/lesson_detail', verifyToken, validateLessonDetail, validateDataLessonDetail, createLessonContent);
 router.put('/lesson_detail/:id', verifyToken, validateLessonDetail, validateDataLessonDetail, updateLessonContent);
 router.delete('/lesson_detail/:id', verifyToken, validateDataLessonDetail, deleteLessonContent);
+router.get('/lesson_detail/:id', verifyToken, getLessonContentById);
 
 //Exams
 router.get('/exam', verifyToken, getExam);
@@ -82,6 +85,7 @@ router.delete('/quiz_question/:id', verifyToken, deleteQuizQuestion);
 router.post('/quiz_question/quiz', verifyToken, getQuestionByQuiz);
 
 /* Learning, Exam & Contest */
+router.post('/learning', verifyToken, RoutingLearning)
 
 /* Monitoring & Reporting */
 

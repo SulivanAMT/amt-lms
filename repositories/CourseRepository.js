@@ -1,4 +1,5 @@
 import Courses from "../db/models/Courses.js";
+import CoursesEmployee from "../db/models/CoursesEmployee.js";
 import Organization from "../db/models/Organization.js";
 import Users from "../db/models/Users.js";
 
@@ -14,6 +15,19 @@ const includeModels = [
         foreignKey :'organization_code',
         attributes : ['organization_code', 'organization_name']
     },
+];
+
+const includeModelsEmp = [
+    {
+        model : Courses,
+        foreignKey : 'course_id',
+        attributes : ['id','course_name']
+    },
+    {
+        model : Users,
+        foreignKey : 'employee_id',
+        attributes : ['id', 'name']
+    }
 ];
 
 export const repoCourseByID = async(id) => {
@@ -64,4 +78,50 @@ export const repoGetCourseByOrg = async(org) => {
 
 export const repoCreateCourse = async(data) => {
     await Courses.create(data);
+}
+
+export const repoEnrollCourse = async(data) => {
+    await Courses.create(data);
+}
+
+export const repoCheckCourseEmployee = async(course_id, employee_id) => {
+    return await CoursesEmployee.findOne({
+        where : {
+            course_id : course_id,
+            employee_id : employee_id
+        }
+    });
+}
+
+export const repoCreateCourseEmployee = async(data) => {
+    await CoursesEmployee.create(data);
+}
+
+export const unEnrollCourse = async(id) => {
+    // await CoursesEmployee.destroy({
+        
+    // })
+}
+
+export const repoGetCourseEmpById = async(id) => {
+    return await CoursesEmployee.findOne({
+        where : {
+            id : id
+        },
+        include : includeModelsEmp
+    });
+}
+
+export const repoGetCourseEmp = async() => {
+    return await CoursesEmployee.findAll({
+        include : includeModelsEmp
+    });
+}
+
+export const repoUpdateCourseEmployee = async(data, id) => {
+    await CoursesEmployee.update(data, {
+        where : {
+            id : id
+        }
+    });
 }

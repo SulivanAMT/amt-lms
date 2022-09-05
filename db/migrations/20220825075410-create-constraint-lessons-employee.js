@@ -9,11 +9,23 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
      await queryInterface.addConstraint('lessons_employee', {
-      fields : ['lesson_id'],
+      fields : ['lesson_detail_id'],
       type : 'foreign key',
-      name : 'FK_LessonsEmployee_Lessons',
+      name : 'FK_LessonsEmployee_LessonsDetail',
       references : {
-        table : 'lessons',
+        table : 'lessons_detail',
+        field : 'id'
+      },
+      onDelete : 'cascade',
+      onUpdate : 'no action'
+    });
+
+    await queryInterface.addConstraint('lessons_employee', {
+      fields : ['course_employee_id'],
+      type : 'foreign key',
+      name : 'FK_LessonsEmployee_CoursesEmployee',
+      references : {
+        table : 'courses_employee',
         field : 'id'
       },
       onDelete : 'no action',

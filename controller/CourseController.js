@@ -1,4 +1,6 @@
-import { repoCreateCourse, repoCourseByID, repoGetCourse, repoDeleteCourse, repoGetCourseByOrg, repoUpdateCourse } from "../repositories/CourseRepository.js";
+import { repoCreateCourse, repoCourseByID, repoGetCourse, repoDeleteCourse, repoGetCourseByOrg, repoUpdateCourse, repoCheckCourseEmployee, repoCreateCourseEmployee } from "../repositories/CourseRepository.js";
+import { repoUserById } from "../repositories/UserRepository.js";
+import moment from 'moment';
 
 export const addCourse = async(req, res) => {
     try {
@@ -100,4 +102,67 @@ export const getCourseByOrg = async(req, res) => {
             is_error : true
         });
     }
+}
+
+export const enrollCourse = async(req ,res) => {
+    try {
+        const courseId = req.body.data.course_id;
+        const employeeId = req.body.data.employee_id;
+        const course = await repoCourseByID(courseId);
+        if(!course){
+            return res.json({
+                message : 'Course tidak ditemukan',
+                is_error : true
+            });
+        }
+        const now = moment(new Date()).format('YYYY-MM-DD');
+        if(course.due_date < now){
+            return res.json({
+                message : 'Course sudah kadaluarsa',
+                is_error : true
+            });
+        }
+        const user = await repoUserById(employeeId);
+        if(!user) {
+            return res.json({
+                message : 'Employee tidak ditemukan',
+                is_error : true
+            });
+        }
+        const courseEmployee = await repoCheckCourseEmployee(courseId, employeeId);
+        if(courseEmployee){
+            return res.json({
+                message : 'Anda sudah mengambil course ini',
+                is_error : true
+            });
+        }
+        const data = {
+            employee_id : employeeId,
+            course_id : courseId,
+            progress : 0,
+            status : 'In Progress'
+        };
+        await repoCreateCourseEmployee(data);
+        return res.json({
+            message : 'Course berhasil di enroll',
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : err,
+            is_error : true
+        });
+    }
+}
+
+export const unEnrollCourse = async(req, res) => {
+
+}
+
+export const getMyCourses = async(req, res) => {
+
+}
+
+export const updateCourseEmployee = async(req, res) => {
+
 }

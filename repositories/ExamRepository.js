@@ -1,5 +1,7 @@
 import Courses from "../db/models/Courses.js";
 import Exams from "../db/models/Exams.js";
+import ExamsEmployee from "../db/models/ExamsEmployee.js";
+import ExamsEmployeeAnswer from "../db/models/ExamsEmployeeAnswer.js";
 import ExamsMultipleChoice from "../db/models/ExamsMultipleChoice.js";
 import ExamsQuestions from "../db/models/ExamsQuestions.js";
 import Organization from "../db/models/Organization.js";
@@ -49,7 +51,7 @@ export const repoGetExamById = async(id) => {
 }
 
 export const repoGetExamByCourse = async(course) => {
-    return await Exams.findOne({
+    return await Exams.findAll({
         where : {
             course_id : course
         }
@@ -127,4 +129,66 @@ export const repoGetQuestionExam = async(exam, questionNumber) => {
         ]
     });
     return examQuestion;
+}
+
+export const repoGetQuestionExamById = async(id) => {
+    return await ExamsQuestions.findOne({
+        where : {
+            id : id
+        }
+    });
+}
+
+export const repoGetQuestionByExam = async(examId) => {
+    return await ExamsQuestions.findAll({
+        where : {
+            exam_id : examId
+        }
+    });
+}
+
+export const repoGetExamEmployeeById = async(id) => {
+    return await ExamsEmployee.findOne({
+        where : {
+            id : id
+        }
+    });
+}
+
+export const repoCheckExamEmployee = async(courseEmployeeId, examId) => {
+    return await ExamsEmployee.count({
+        where : {
+            course_employee_id : courseEmployeeId,
+            exam_id : examId
+        }
+    });
+}
+
+export const repoEnrollExam = async(data) => {
+    return await ExamsEmployee.create(data)
+};
+
+export const repoExamAnswerQuestion = async(data) => {
+    await ExamsEmployeeAnswer.create(data);
+}
+
+export const repoUnEnrollExam = async(id) => {
+
+}
+
+export const repoGetExamEmployeeAnswer = async(examEmployeeId, examQuestionId) => {
+    return await ExamsEmployeeAnswer.findOne({
+        where : {
+            exam_employee_id : examEmployeeId,
+            exam_question_id : examQuestionId
+        }
+    });
+}
+
+export const repoDeleteExamEmployeeAnswer = async(id) => {
+    await ExamsEmployeeAnswer.destroy({
+        where : {
+            id : id
+        }
+    });
 }

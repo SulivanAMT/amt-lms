@@ -5,27 +5,8 @@ export const getUserById = async(req, res) => {
     try {
         const users = await repoUserById(req.params.id);
         res.json({
-            data : {
-                nik : users.nik,
-                name : users.name,
-                phone_number : users.phone_number,
-                status : users.status,
-                createdAt : users.createdAt,
-                updatedAt : users.updatedAt,
-                role : {
-                    roles_code : users.role.roles,
-                    roles_name : users.role.roles_description
-                },
-                organization : {
-                    organization_code : users.organization.organization_code,
-                    organization_name : users.organization.organization_name
-                },
-                position : {
-                    position_code : users.position.position_code,
-                    position_name : users.position.position_name
-                },
-                is_error : false,
-            }
+            data : users, 
+            is_error : false
         });
     }catch(err){
         res.json({
@@ -129,6 +110,46 @@ export const getListOfMenu = async(req, res) => {
 
 }
 
-export const getPermission = async(req, res) => {
+export const getPermissionByMenu = async(req, res) => {
+
+}
+
+export const getPosition = async(req, res) => {
+
+}
+
+export const getPositionById = async(req, res) => {
+
+}
+
+export const updatePosition = async(req, res) => {
+
+}
+
+export const deletePosition = async(req, res) => {
+
+}
+
+export const createPosition = async(req, res) => {
+
+}
+
+export const getOrganization = async(req, res) => {
+
+}
+
+export const getOrganizationById = async(req, res) => {
+
+}
+
+export const updateOrganization = async(req, res) => {
     
+}
+
+export const deleteOrganization = async(req, res) => {
+
+}
+
+export const createOrganization = async(req, res) => {
+
 }

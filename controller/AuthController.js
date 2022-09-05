@@ -6,7 +6,7 @@ export const login = async(req, res) => {
     try {
         const user = await repoGetByEmail(req.body.email);
         if(!user){
-            res.json({
+            return res.json({
                 message : "Email atau password salah",
                 is_error : true,
             });
@@ -21,11 +21,20 @@ export const login = async(req, res) => {
         const userId = user.id;
         const name = user.name;
         const email = user.email;
-        const accessToken = jwt.sign({userId, name, email}, process.env.ACCESS_TOKEN_SECRET,{
+        const refreshToken = jwt.sign({userId, name, email}, process.env.REFRESH_TOKEN_SECRET,{
             expiresIn : '1d'
         });
-        await repoUpdateUser({token : accessToken}, userId);
-        res.json({
+        const accessToken = jwt.sign({userId, name, email}, process.env.ACCESS_TOKEN_SECRET,{
+            expiresIn : '30s'
+        });
+        await repoUpdateUser({refresh_token : refreshToken}, userId);
+        res.cookie('refreshToken',refreshToken, {
+            httpOnly: true,
+            sameSite: false,
+            secure: true,
+            maxAge : 24 * 60 * 60 * 1000
+        });
+        return res.json({
             data : {
                 user_id : userId,
                 name : name,
@@ -35,7 +44,7 @@ export const login = async(req, res) => {
             is_error : false,
         });
     } catch(err) {
-        res.status(200).json({
+        return res.status(200).json({
             is_error : true,
             message : err
         });
@@ -43,23 +52,60 @@ export const login = async(req, res) => {
 }
 
 export const logout = async(req, res) => {
-    if(!req.headers.authorization){
-        res.status(200).json({
+    if(!req.cookies.refreshToken){
+        return res.json({
             message : "Bearer token kosong",
             is_error : true
         })
     }
-    const accessToken = req.headers.authorization.split(' ')[1];
-    const user = await repoGetByToken(accessToken);
+    const refreshToken = req.cookies.refreshToken;
+    const user = await repoGetByToken(refreshToken);
     if(!user){
-        res.status(404).json({
+        return res.json({
             message : "User not found",
             is_error : true
         });
     };
     await repoUpdateUser({ token : null }, user.id);
-    res.status(200).json({
+    res.clearCookie('refreshToken');
+    return res.json({
        message : "Logout berhasil",
        is_error : false
     });
+}
+
+export const refreshToken = async(req, res) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        if(!refreshToken) return res.sendStatus(401);
+        const user = await repoGetByToken(refreshToken);
+        if(user.length == 0){
+            return res.json({
+                message : 'Error has occured',
+                is_error : true
+            });
+        }
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+            if(err){
+                return res.json({
+                    message : err,
+                    is_error : true
+                });
+            }
+            const userId = user.id;
+            const name = user.name;
+            const email = user.email;
+            const accessToken = jwt.sign({userId, name, email}, process.env.ACCESS_TOKEN_SECRET,{
+                expiresIn: '15s'
+            });
+            res.json({
+                data : {
+                    access_token : accessToken
+                },
+                is_error : false
+            });
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }

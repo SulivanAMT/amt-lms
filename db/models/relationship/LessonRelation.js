@@ -4,11 +4,12 @@ import Courses from '../Courses.js';
 
 const LessonsDetail = db.define('lessons_detail', {
     lesson_id : {
-        allowNull: false,
         type: Sequelize.INTEGER
     },
+    lesson_detail_title : {
+        type : Sequelize.STRING
+    },
     lesson_content : {
-        allowNull : false,
         type : Sequelize.TEXT
     },
 }, {
@@ -27,6 +28,23 @@ const Lessons = db.define('lessons', {
     },
 });
 
+const LessonsEmployee = db.define('lessons_employee', {
+    course_employee_id : {
+        type : Sequelize.INTEGER
+    },
+    lesson_detail_id : {
+        type : Sequelize.INTEGER
+    },
+    status : {
+        type : Sequelize.ENUM('Completed','Uncompleted')
+    },
+    point : {
+        type : Sequelize.FLOAT
+    }
+}, {
+    freezeTableName : true
+});
+
 Lessons.hasMany(LessonsDetail, {
     foreignKey : 'lesson_id'
 });
@@ -39,4 +57,12 @@ LessonsDetail.belongsTo(Lessons, {
     foreignKey : 'lesson_id'
 });
 
-export { Lessons, LessonsDetail };
+LessonsDetail.hasOne(LessonsEmployee, {
+    foreignKey : 'lesson_detail_id'
+});
+
+LessonsEmployee.belongsTo(LessonsDetail, {
+    foreignKey : 'lesson_detail_id'
+});
+
+export { Lessons, LessonsDetail, LessonsEmployee };

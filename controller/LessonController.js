@@ -1,4 +1,7 @@
-import { repoCreateLesson, repoCreateLessonContent, repoDeleteLesson, repoDeleteLessonContent, repoGetLesson, repoGetLessonByCourse, repoGetLessonById, repoGetLessonContentByLesson, repoUpdateLesson, repoUpdateLessonContent } from "../repositories/LessonRepository.js";
+import { repoGetCourseEmpById, repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
+import { repoGetExamByCourse } from "../repositories/ExamRepository.js";
+import { repoCompletedSubLesson, repoCreateLesson, repoCreateLessonContent, repoDeleteLesson, repoDeleteLessonContent, repoGetLesson, repoGetLessonByCourse, repoGetLessonById, repoGetLessonContentById, repoGetLessonContentByLesson, repoGetLessonsEmpByIdAndLesson, repoUpdateLesson, repoUpdateLessonContent } from "../repositories/LessonRepository.js";
+import { repoGetQuizByCourse } from "../repositories/QuizRepository.js";
 
 export const addLesson = async(req, res) => {
     try {
@@ -102,7 +105,7 @@ export const getLessonById = async(req, res) => {
 
 export const getLessonContentByLesson = async(req, res) => {
     try {
-        const lessonContent = await repoGetLessonContentByLesson(req.params.lesson);
+        const lessonContent = await repoGetLessonContentByLesson(req.body.lesson_id);
         return res.json({
             data : lessonContent,
             is_error : false
@@ -119,6 +122,7 @@ export const createLessonContent = async(req, res) => {
     try {
         const data = {
             lesson_id : req.body.lesson_id,
+            lesson_detail_title : req.body.lesson_detail_title,
             lesson_content : req.body.lesson_content
         };
         await repoCreateLessonContent(data);
@@ -168,6 +172,74 @@ export const deleteLessonContent = async(req, res) => {
     }
 }
 
-export const doneLesson = async(req, res) => {
-    
+export const completedLessonContent = async(req, res) => {
+    try {
+        const courseEmployeeId = req.body.data.course_employee_id;
+        const lessonDetailId = req.body.data.lesson_detail_id;
+        const status = req.body.data.status;
+        const courseEmployee = await repoGetCourseEmpById(courseEmployeeId);
+        if(!courseEmployee) {
+            return res.json({
+                message : 'Course tidak terdaftar di list anda',
+                is_error : true
+            });
+        }
+        const lessonContent = await repoGetLessonContentById(lessonDetailId);
+        if(!lessonContent) {
+            return res.json({
+                message : 'Sub lesson tidak ditemukan',
+                is_error : true
+            });
+        }
+        const data = {
+            course_employee_id : courseEmployeeId,
+            lesson_detail_id : lessonDetailId,
+            status : status,
+            point : 100
+        };
+        const checkCompletedLesson = await repoGetLessonsEmpByIdAndLesson(courseEmployeeId, lessonDetailId);
+        if(!checkCompletedLesson){
+            await repoCompletedSubLesson(data);
+            await repoUpdateCourseEmployee({ progress : courseEmployee.progress + await getCalculationCourse(courseEmployee.course_id) }, courseEmployeeId);
+        }
+        return res.json({
+            message : 'Lesson Completed',
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : err,
+            is_error : true
+        });
+    }
+}
+
+const getCalculationCourse = async(courseId) => {
+    const lessons = await repoGetLessonByCourse(courseId);
+    const quiz = await repoGetQuizByCourse(courseId);
+    const exams = await repoGetExamByCourse(courseId);
+    let countLesson = 0;
+    if(lessons){
+        lessons.forEach((item, index) => {
+            lessons[index].lessons_details.forEach(() => {
+                countLesson ++;
+            });
+        });
+    }
+    return 100 / (countLesson + quiz.length + exams.length);
+}
+
+export const getLessonContentById = async(req, res) => {
+    try {
+        const lesson = await repoGetLessonContentById(req.params.id);
+        return res.json({
+            data : lesson,
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : err,
+            is_error : true
+        });
+    }
 }

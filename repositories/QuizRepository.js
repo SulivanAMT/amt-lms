@@ -49,7 +49,7 @@ export const repoGetQuizById = async(id) => {
 }
 
 export const repoGetQuizByCourse = async(course) => {
-    return await Quiz.findOne({
+    return await Quiz.findAll({
         where : {
             course_id : course
         }

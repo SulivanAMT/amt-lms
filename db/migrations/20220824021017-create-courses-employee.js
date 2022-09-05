@@ -8,28 +8,28 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('lessons_employee', {
+    await queryInterface.createTable('courses_employee', {
       id : {
         allowNull : false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      course_employee_id : {
+      employee_id : {
         allowNull : false,
         type : Sequelize.INTEGER
       },
-      lesson_detail_id : {
+      course_id : {
         allowNull : false,
         type : Sequelize.INTEGER
+      },
+      progress : {
+        allowNull : false,
+        type : Sequelize.FLOAT
       },
       status : {
         allowNull : false,
-        type : Sequelize.ENUM('Completed', 'Uncompleted')
-      },
-      point : {
-        allowNull : false,
-        type : Sequelize.FLOAT
+        type : Sequelize.ENUM('Completed','In Progress')
       },
       createdAt: {
         allowNull: false,
@@ -39,7 +39,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    })
   },
 
   async down (queryInterface, Sequelize) {
@@ -49,6 +49,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-     await queryInterface.dropTable('lessons_employee');
+    await queryInterface.dropTable('courses_employee');
   }
 };

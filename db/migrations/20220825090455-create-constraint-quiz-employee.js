@@ -21,9 +21,9 @@ module.exports = {
     });
 
     await queryInterface.addConstraint('quiz_employee', {
-      fields : ['employee_id'],
+      fields : ['course_employee_id'],
       type : 'foreign key',
-      name : 'FK_QuizEmployee_Users',
+      name : 'FK_QuizEmployee_CoursesEmployee',
       references : {
         table : 'users',
         field : 'id'

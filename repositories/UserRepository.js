@@ -3,19 +3,22 @@ import Roles from "../db/models/Roles.js";
 import Organization from "../db/models/Organization.js";
 import Position from "../db/models/Position.js";
 
-const attributes = ['name','email','phone_number','status','createdAt','updatedAt'];
+const attributes = ['id', 'name','email','phone_number','status','createdAt','updatedAt'];
 const includeModels = [
     {
         model : Roles,
-        foreignKey : 'roles'
+        foreignKey : 'roles',
+        attributes : ['roles', 'roles_description']
     },
     {
         model : Organization,
-        foreignKey :'organization_code'
+        foreignKey :'organization_code',
+        attributes : ['organization_code', 'organization_name']
     },
     {
         model : Position,
-        foreignKey :'position_code'
+        foreignKey :'position_code',
+        attributes : ['position_code', 'position_name']
     }
 ];
 
@@ -71,7 +74,7 @@ export const repoGetByEmail = async(email) => {
 export const repoGetByToken = async(token) => {
     const user = await Users.findOne({
         where : {
-            token : token
+            refresh_token : token
         }
     });
     return user;

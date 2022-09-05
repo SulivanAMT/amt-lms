@@ -193,3 +193,15 @@ export const getQuestionByQuiz = async(req, res) => {
         });
     }
 }
+
+export const enrollQuiz = async(req, res) => {
+
+}
+
+export const quizAnswerQuestion = async(req, res) => {
+
+}
+
+export const quizSubmitAnswer = async(req, res) => {
+    
+}

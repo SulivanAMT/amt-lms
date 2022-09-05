@@ -1,12 +1,17 @@
 import Courses from "../db/models/Courses.js";
-import { Lessons, LessonsDetail } from "../db/models/relationship/LessonRelation.js";
+import { Lessons, LessonsDetail, LessonsEmployee } from "../db/models/relationship/LessonRelation.js";
 import Organization from "../db/models/Organization.js";
 
 const includeModelsLesson = [
     {
         model : LessonsDetail,
         foreignKey : 'lesson_id',
-        attributes : ['lesson_content']
+        attributes : ['lesson_detail_title','lesson_content'],
+        include : {
+            model : LessonsEmployee,
+            foreignKey : 'lesson_detail_id',
+            attributes : ['status','point']
+        }
     },
     {
         model : Courses,
@@ -90,6 +95,27 @@ export const repoUpdateLessonContent = async(data, id) => {
 
 export const repoDeleteLessonContent = async(id) => {
     await LessonsDetail.destroy({
+        where : {
+            id : id
+        }
+    });
+}
+
+export const repoCompletedSubLesson = async(data) => {
+    await LessonsEmployee.create(data);
+}
+
+export const repoGetLessonsEmpByIdAndLesson = async(id, lesson) => {
+    return await LessonsEmployee.findOne({
+        where : {
+            course_employee_id : id,
+            lesson_detail_id : lesson
+        }
+    });
+}
+
+export const repoGetLessonContentById = async(id) => {
+    return await LessonsDetail.findOne({
         where : {
             id : id
         }

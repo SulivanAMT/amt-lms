@@ -39,7 +39,7 @@ module.exports = {
         type : Sequelize.STRING,
         allowNull : false
       },
-      token : {
+      refresh_token : {
         type : Sequelize.TEXT,
         length : 500
       },

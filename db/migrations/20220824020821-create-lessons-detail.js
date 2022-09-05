@@ -19,6 +19,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      lesson_detail_title : {
+        allowNull : false,
+        type : Sequelize.STRING
+      },
       lesson_content : {
         allowNull : false,
         type : Sequelize.TEXT

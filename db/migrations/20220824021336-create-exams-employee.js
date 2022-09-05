@@ -15,7 +15,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      employee_id : {
+      course_employee_id : {
         allowNull : false,
         type : Sequelize.INTEGER
       },
@@ -32,7 +32,9 @@ module.exports = {
         type : Sequelize.DATE
       },
       end_at: {
-        allowNull : false,
+        type : Sequelize.DATE
+      },
+      max_time : {
         type : Sequelize.DATE
       },
       status : {

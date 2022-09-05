@@ -8,24 +8,24 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-     await queryInterface.addConstraint('exams_employee', {
-      fields : ['exam_id'],
+     await queryInterface.addConstraint('courses_employee', {
+      fields : ['course_id'],
       type : 'foreign key',
-      name : 'FK_ExamsEmployee_Exams',
+      name : 'FK_CoursesEmployee_Courses',
       references : {
-        table : 'exams',
+        table : 'courses',
         field : 'id'
       },
       onDelete : 'cascade',
       onUpdate : 'no action'
     });
 
-    await queryInterface.addConstraint('exams_employee', {
-      fields : ['course_employee_id'],
+    await queryInterface.addConstraint('courses_employee', {
+      fields : ['employee_id'],
       type : 'foreign key',
-      name : 'FK_ExamsEmployee_CoursesEmployee',
+      name : 'FK_CoursesEmployee_Employee',
       references : {
-        table : 'courses_employee',
+        table : 'users',
         field : 'id'
       },
       onDelete : 'no action',
