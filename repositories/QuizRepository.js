@@ -3,6 +3,10 @@ import Quiz from "../db/models/Quiz.js";
 import QuizMultipleChoice from "../db/models/QuizMultipleChoice.js";
 import QuizQuestions from "../db/models/QuizQuestions.js";
 import Organization from "../db/models/Organization.js";
+import QuizEmployee from "../db/models/QuizEmployee.js";
+import QuizEmployeeAnswer from "../db/models/QuizEmployeeAnswer.js";
+import CoursesEmployee from "../db/models/CoursesEmployee.js";
+import Sequelize from "sequelize";
 
 export const repoCreateQuiz = async(data) => {
     await Quiz.create(data);
@@ -127,4 +131,96 @@ export const repoGetQuestionQuiz = async(quiz, questionNumber) => {
         ]
     });
     return quizQuestion;
+}
+
+export const repoGetQuestionQuizById = async(id) => {
+    return await QuizQuestions.findOne({
+        where : {
+            id : id
+        }
+    });
+}
+
+export const repoGetQuestionByQuiz = async(quizId) => {
+    return await QuizQuestions.findAll({
+        where : {
+            quiz_id : quizId
+        }
+    });
+}
+
+export const repoEnrollQuiz = async(data) => {
+    await QuizEmployee.create(data);
+}
+
+export const repoQuizAnswerQuestion = async(data) => {
+    await QuizEmployeeAnswer.create(data);
+}
+
+export const repoCheckQuizEmployee = async(courseEmployeeId, quizId) => {
+    return await QuizEmployee.findOne({
+        include : {
+            model : CoursesEmployee,
+            foreignKey : 'course_employee_id'
+        },
+        where : {
+            course_employee_id : courseEmployeeId,
+            quiz_id : quizId
+        }
+    });
+}
+
+export const repoUnEnrollQuiz = async(quizEmployeeId) => {
+    await QuizEmployee.destroy({
+        where : {
+            id : quizEmployeeId
+        }
+    });
+}
+
+export const repoGetQuizEmployeeById = async(id) => {
+    return await QuizEmployee.findOne({
+        include : {
+            model : CoursesEmployee,
+            foreignKey : 'course_employee_id'
+        },
+        where : {
+            id : id
+        }
+    });
+}
+
+export const repoGetQuizEmployeeAnswer = async(quizEmployeeId, quizQuestionId) => {
+    return await QuizEmployeeAnswer.findOne({
+        where : {
+            quiz_employee_id : quizEmployeeId,
+            quiz_question_id : quizQuestionId
+        }
+    });
+}
+
+export const repoDeleteQuizEmployeeAnswer = async(id) => {
+    await QuizEmployeeAnswer.destroy({
+        where : {
+            id :id
+        }
+    });
+}
+
+export const repoSumPointByQuizEmp = async(quizEmployeeId) => {
+    return await QuizEmployeeAnswer.findOne({
+        attributes : [[ Sequelize.fn('sum', Sequelize.col('point')),'total']],
+        where : {
+            quiz_employee_id : quizEmployeeId
+        },
+        raw : true
+    }); 
+}
+
+export const repoUpdateQuizEmp = async(data, id) => {
+    await QuizEmployee.update(data, {
+        where : {
+            id : id
+        }
+    });
 }

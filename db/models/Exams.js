@@ -18,6 +18,9 @@ const Exams = db.define('exams', {
     created_by : {
         type : Sequelize.STRING
     },
+    passing_grade : {
+        type : Sequelize.FLOAT
+    }
 });
 
 Exams.belongsTo(Courses, {

@@ -1,4 +1,6 @@
+import { Sequelize } from "sequelize";
 import Courses from "../db/models/Courses.js";
+import CoursesEmployee from "../db/models/CoursesEmployee.js";
 import Exams from "../db/models/Exams.js";
 import ExamsEmployee from "../db/models/ExamsEmployee.js";
 import ExamsEmployeeAnswer from "../db/models/ExamsEmployeeAnswer.js";
@@ -149,6 +151,10 @@ export const repoGetQuestionByExam = async(examId) => {
 
 export const repoGetExamEmployeeById = async(id) => {
     return await ExamsEmployee.findOne({
+        include : {
+            model : CoursesEmployee,
+            foreignKey : 'course_employee_id'
+        },
         where : {
             id : id
         }
@@ -187,6 +193,24 @@ export const repoGetExamEmployeeAnswer = async(examEmployeeId, examQuestionId) =
 
 export const repoDeleteExamEmployeeAnswer = async(id) => {
     await ExamsEmployeeAnswer.destroy({
+        where : {
+            id : id
+        }
+    });
+}
+
+export const repoSumPointByExamEmployee = async(examEmployeeId) => {
+    return await ExamsEmployeeAnswer.findOne({
+        attributes : [[ Sequelize.fn('sum', Sequelize.col('point')),'total']],
+        where : {
+            exam_employee_id : examEmployeeId
+        },
+        raw : true
+    });
+}
+
+export const repoUpdateExamEmployee = async(data, id) => {
+    await ExamsEmployee.update(data, {
         where : {
             id : id
         }

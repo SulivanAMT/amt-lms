@@ -122,6 +122,7 @@ export const repoUpdateCourseEmployee = async(data, id) => {
     await CoursesEmployee.update(data, {
         where : {
             id : id
-        }
+        },
+        individualHooks : true
     });
 }

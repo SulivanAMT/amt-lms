@@ -23,7 +23,11 @@ module.exports = {
         allowNull : false,
         type : Sequelize.INTEGER
       },
-      point_total : {
+      point : {
+        allowNull : false,
+        type : Sequelize.FLOAT
+      },
+      score : {
         allowNull : false,
         type : Sequelize.FLOAT
       },
@@ -32,6 +36,9 @@ module.exports = {
         type : Sequelize.DATE
       },
       end_at: {
+        type : Sequelize.DATE
+      },
+      max_time : {
         allowNull : false,
         type : Sequelize.DATE
       },

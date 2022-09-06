@@ -1,6 +1,8 @@
-import { errMsg, lower } from "../helper/Helper.js";
-import { repoCheckExamEmployee, repoCreateExam, repoCreateExamQuestion, repoDeleteExam, repoDeleteExamEmployeeAnswer, repoDeleteExamQuestion, repoEnrollExam, repoExamAnswerQuestion, repoGetExam, repoGetExamByCourse, repoGetExamById, repoGetExamEmployeeAnswer, repoGetExamEmployeeById, repoGetQuestionByExam, repoGetQuestionExam, repoGetQuestionExamById, repoUpdateExam, repoUpdateExamQuestion } from "../repositories/ExamRepository.js";
+import { calculatePointQuestion, errMsg, getProgress, lower } from "../helper/Helper.js";
+import { repoCheckExamEmployee, repoCreateExam, repoCreateExamQuestion, repoDeleteExam, repoDeleteExamEmployeeAnswer, repoDeleteExamQuestion, repoEnrollExam, repoExamAnswerQuestion, repoGetExam, repoGetExamByCourse, repoGetExamById, repoGetExamEmployeeAnswer, repoGetExamEmployeeById, repoGetQuestionByExam, repoGetQuestionExam, repoGetQuestionExamById, repoSumPointByExamEmployee, repoUpdateExam, repoUpdateExamEmployee, repoUpdateExamQuestion } from "../repositories/ExamRepository.js";
 import moment from 'moment';
+import { repoGetCourseEmpById, repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
+import { repoGetLessonByCourse, repoGetLessonEmpByCourseEmp } from "../repositories/LessonRepository.js";
 
 export const createExam = async(req, res) => {
     try {
@@ -9,6 +11,7 @@ export const createExam = async(req, res) => {
             course_id : req.body.course_id,
             exam_time : req.body.exam_time,
             number_of_question : req.body.number_of_question,
+            passing_grade : req.body.passing_grade,
             created_by : req.body.created_by
         };
         await repoCreateExam(data);
@@ -210,6 +213,23 @@ export const enrollExam = async(req, res) => {
                 is_error : true
             });
         }
+        const courseEmployee = await repoGetCourseEmpById(courseEmployeeId);
+        const lessonEmployee = await repoGetLessonEmpByCourseEmp(courseEmployeeId);
+        const lessons = await repoGetLessonByCourse(courseEmployee.course_id);
+        let countLesson = 0;
+        if(lessons){
+            lessons.forEach((item, index) => {
+                lessons[index].lessons_details.forEach(() => {
+                    countLesson ++;
+                });
+            });
+            if(lessonEmployee.length < countLesson){
+                return res.json({
+                    message : 'Gagal, anda belum menyelesaikan semua materi',
+                    is_error : true
+                });
+            }
+        }
         const splitTime = exam.exam_time.split(":");
         let maxTime = moment(new Date());
         if(splitTime[0] > 0){
@@ -225,14 +245,15 @@ export const enrollExam = async(req, res) => {
         const checkExamsEmployee = await repoCheckExamEmployee(courseEmployeeId, examId);
         if(checkExamsEmployee > 0){
             return res.json({
-                message : 'Ujian telah dimulai',
+                message : 'Gagal, Ujian sudah pernah diambil',
                 is_error : true
             });
         }
         const data = {
             course_employee_id : courseEmployeeId,
             exam_id : examId,
-            point_total : pointTotal,
+            point : 0,
+            score : 0,
             start_at : startAt,
             max_time : maxTime,
             status : status
@@ -269,7 +290,7 @@ export const examAnswerQuestion = async(req, res) => {
                 is_error : true
             });
         }
-        if(examEmployee.exam_id !== examQuestion.exam_id){
+        if(examEmployee.exam_id !== examQuestion.exam_id || examEmployee.status == 'Done'){
             return res.json({
                 message : 'Jawaban tidak dapat disubmit',
                 is_error : true
@@ -287,7 +308,7 @@ export const examAnswerQuestion = async(req, res) => {
             }
         }
         const isCorrect =  lower(examQuestion.answer_of_question) == lower(answerOfQuestion) ? 'Y' : 'T';
-        const point = await calculatePointQuestion(examQuestionId, examQuestion.question_type);
+        const point = await calculatePointQuestion(examQuestionId, examQuestion.question_type, 'Exam');
         const data = {
             exam_employee_id : examEmployeeId,
             exam_question_id : examQuestionId,
@@ -308,33 +329,36 @@ export const examAnswerQuestion = async(req, res) => {
     }
 }
 
-const calculatePointQuestion = async(examQuestionId, questionType) => {
-    const passMultiple = 70; // % an utk pg
-    const passEsay = 30; // % an utk essay
-    const passAll = 100; // % an utk semua jika hanya ada soal pg tidak ada essay begitu juga sebaliknya
-    const examQuestion = await repoGetQuestionExamById(examQuestionId);
-    const allQuestion = await repoGetQuestionByExam(examQuestion.exam_id);
-    let multipleTotal = 0;
-    let essayTotal = 0;
-    let calcPoint;
-    allQuestion.forEach((item, index) => {
-        if(allQuestion[index].question_type == 'Multiple Choice'){
-            multipleTotal++;
-        }else{
-            essayTotal++;
-        }
-    });
-    const passPoint = questionType == 'Multiple Choice' ? passMultiple : passEsay;
-    const passQuestion = questionType == 'Multiple Choice' ? multipleTotal : essayTotal;
-    calcPoint = passAll / passQuestion;
-    if(multipleTotal > 0 && essayTotal > 0){
-        calcPoint = passPoint / passQuestion;
-    }
-    return calcPoint;
-}
-
 export const examSubmitAnswer = async(req, res) => {
-    try {       
+    try {
+        const examEmployeeId = req.body.data.exam_employee_id;
+        const totalPoint = await repoSumPointByExamEmployee(examEmployeeId);
+        const examEmployee = await repoGetExamEmployeeById(examEmployeeId);
+        if(!examEmployee){
+            return res.json({
+                message : 'Ujian tidak ditemukan',
+                is_error : true
+            });
+        }
+        const exam = await repoGetExamById(examEmployee.exam_id);
+        const passedStatus = totalPoint.total >= exam.passing_grade ? 'Passed' : 'Not Passed';
+        if(examEmployee.status == 'Done'){
+            return res.json({
+                message : 'Ujian sudah pernah disubmit',
+                is_error : true
+            });
+        }
+        await repoUpdateExamEmployee({
+            end_at : moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+            status : 'Done',
+            passed_status : passedStatus,
+            point : 200,
+            score : totalPoint.total
+        }, examEmployeeId);
+        const progress = await getProgress(examEmployee.courses_employee.course_id);
+        await repoUpdateCourseEmployee({
+            progress : examEmployee.courses_employee.progress + progress
+        }, examEmployee.courses_employee.id);
         return res.json({
             message : 'Ujian berhasil disubmit',
             is_error : false
@@ -343,10 +367,6 @@ export const examSubmitAnswer = async(req, res) => {
         return res.json({
             message : errMsg(err),
             is_error : true
-        })
+        });
     }
-}
-
-export const unEnrollExam = async(req, res) => {
-
 }

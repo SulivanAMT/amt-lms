@@ -121,3 +121,11 @@ export const repoGetLessonContentById = async(id) => {
         }
     });
 }
+
+export const repoGetLessonEmpByCourseEmp = async(courseEmployeeId) => {
+    return await LessonsEmployee.findAll({
+        where : {
+            course_employee_id : courseEmployeeId
+        }
+    });
+}

@@ -25,10 +25,10 @@ module.exports = {
       type : 'foreign key',
       name : 'FK_QuizEmployeeAnswer_QuizEmployee',
       references : {
-        table : 'exams_questions',
+        table : 'quiz_employee',
         field : 'id'
       },
-      onDelete : 'no action',
+      onDelete : 'cascade',
       onUpdate : 'no action'
     });
   },

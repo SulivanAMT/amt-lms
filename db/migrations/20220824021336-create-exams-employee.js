@@ -23,7 +23,11 @@ module.exports = {
         allowNull : false,
         type : Sequelize.INTEGER
       },
-      point_total : {
+      point : {
+        allowNull : false,
+        type : Sequelize.FLOAT
+      },
+      score : {
         allowNull : false,
         type : Sequelize.FLOAT
       },
@@ -40,6 +44,10 @@ module.exports = {
       status : {
         allowNull : false,
         type : Sequelize.ENUM('Done', 'In Progress')
+      },
+      passed_status : {
+        allowNull : false,
+        type : Sequelize.ENUM('Passed','Not Passed')
       },
       createdAt: {
         allowNull: false,

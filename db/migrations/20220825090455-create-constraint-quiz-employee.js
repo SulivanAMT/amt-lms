@@ -25,7 +25,7 @@ module.exports = {
       type : 'foreign key',
       name : 'FK_QuizEmployee_CoursesEmployee',
       references : {
-        table : 'users',
+        table : 'courses_employee',
         field : 'id'
       },
       onDelete : 'no action',

@@ -1,3 +1,4 @@
+import { getProgress } from "../helper/Helper.js";
 import { repoGetCourseEmpById, repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
 import { repoGetExamByCourse } from "../repositories/ExamRepository.js";
 import { repoCompletedSubLesson, repoCreateLesson, repoCreateLessonContent, repoDeleteLesson, repoDeleteLessonContent, repoGetLesson, repoGetLessonByCourse, repoGetLessonById, repoGetLessonContentById, repoGetLessonContentByLesson, repoGetLessonsEmpByIdAndLesson, repoUpdateLesson, repoUpdateLessonContent } from "../repositories/LessonRepository.js";
@@ -191,6 +192,17 @@ export const completedLessonContent = async(req, res) => {
                 is_error : true
             });
         }
+        let previousLesson = lessonDetailId - 1;
+        const getLesson = await repoGetLessonContentById(previousLesson);
+        if(getLesson){
+            const lessonEmployee = await repoGetLessonsEmpByIdAndLesson(courseEmployeeId, getLesson.id);
+            if(!lessonEmployee){
+                return res.json({
+                    message : 'Lesson tidak dapat diselesaikan, silahkan selesaikan materi sebelumnya dahulu',
+                    is_error : true
+                });
+            }
+        }
         const data = {
             course_employee_id : courseEmployeeId,
             lesson_detail_id : lessonDetailId,
@@ -200,7 +212,7 @@ export const completedLessonContent = async(req, res) => {
         const checkCompletedLesson = await repoGetLessonsEmpByIdAndLesson(courseEmployeeId, lessonDetailId);
         if(!checkCompletedLesson){
             await repoCompletedSubLesson(data);
-            await repoUpdateCourseEmployee({ progress : courseEmployee.progress + await getCalculationCourse(courseEmployee.course_id) }, courseEmployeeId);
+            await repoUpdateCourseEmployee({ progress : courseEmployee.progress + await getProgress(courseEmployee.course_id) }, courseEmployeeId);
         }
         return res.json({
             message : 'Lesson Completed',
@@ -212,21 +224,6 @@ export const completedLessonContent = async(req, res) => {
             is_error : true
         });
     }
-}
-
-const getCalculationCourse = async(courseId) => {
-    const lessons = await repoGetLessonByCourse(courseId);
-    const quiz = await repoGetQuizByCourse(courseId);
-    const exams = await repoGetExamByCourse(courseId);
-    let countLesson = 0;
-    if(lessons){
-        lessons.forEach((item, index) => {
-            lessons[index].lessons_details.forEach(() => {
-                countLesson ++;
-            });
-        });
-    }
-    return 100 / (countLesson + quiz.length + exams.length);
 }
 
 export const getLessonContentById = async(req, res) => {

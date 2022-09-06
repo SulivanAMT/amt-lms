@@ -2,11 +2,11 @@ import { Sequelize } from "sequelize";
 import db from "../../config/database.js";
 import CoursesEmployee from "./CoursesEmployee.js";
 
-const ExamsEmployee = db.define('exams_employee', {
+const QuizEmployee = db.define('quiz_employee', {
     course_employee_id : {
-        type: Sequelize.INTEGER
+        type : Sequelize.INTEGER
     },
-    exam_id : {
+    quiz_id : {
         type : Sequelize.INTEGER
     },
     point : {
@@ -26,16 +26,13 @@ const ExamsEmployee = db.define('exams_employee', {
     },
     status : {
         type : Sequelize.ENUM('Done', 'In Progress')
-    },
-    passed_status : {
-        type : Sequelize.ENUM('Passed', 'Not Passed')
     }
 }, {
     freezeTableName : true
 });
 
-ExamsEmployee.belongsTo(CoursesEmployee, {
+QuizEmployee.belongsTo(CoursesEmployee, {
     foreignKey : 'course_employee_id'
-});
+})
 
-export default ExamsEmployee;
+export default QuizEmployee;

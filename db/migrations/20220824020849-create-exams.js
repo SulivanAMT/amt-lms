@@ -35,9 +35,9 @@ module.exports = {
         allowNull : false,
         type : Sequelize.INTEGER
       },
-      created_by : {
+      passing_grade : {
         allowNull : false,
-        type : Sequelize.STRING
+        type : Sequelize.FLOAT
       },
       createdAt: {
         allowNull: false,

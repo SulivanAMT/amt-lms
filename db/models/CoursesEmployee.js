@@ -17,7 +17,17 @@ const CoursesEmployee = db.define('courses_employee', {
         type : Sequelize.ENUM('Completed', 'In Progress')
     }
 }, {
-    freezeTableName : true
+    freezeTableName : true,
+    hooks :{
+        beforeUpdate : (courses, options) => {
+            if(courses.progress >= 100){
+                courses.progress = 100;
+                courses.status = 'Completed'
+            }else{
+                courses.status = 'In Progress'
+            }
+        }
+    }
 });
 
 CoursesEmployee.belongsTo(Users, {
