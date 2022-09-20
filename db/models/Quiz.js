@@ -10,6 +10,9 @@ const Quiz = db.define('quiz', {
     course_id : {
         type : Sequelize.INTEGER
     },
+    description : {
+        type : Sequelize.STRING
+    },
     quiz_time : {
         type : Sequelize.INTEGER
     },

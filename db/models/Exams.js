@@ -9,6 +9,9 @@ const Exams = db.define('exams', {
     course_id : {
         type : Sequelize.INTEGER
     },
+    description : {
+        type : Sequelize.STRING
+    },
     exam_time : {
         type : Sequelize.INTEGER
     },

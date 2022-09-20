@@ -6,7 +6,10 @@ import Organization from './Organization.js';
 const Courses = db.define('courses', {
     course_name : {
         type : Sequelize.STRING
-      },
+    },
+    description : {
+        allowNull : false
+    },
     organization_code : {
         type : Sequelize.STRING
     },
