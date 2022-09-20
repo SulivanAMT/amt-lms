@@ -23,9 +23,13 @@ module.exports = {
         allowNull : false,
         type : Sequelize.INTEGER
       },
+      description: {
+        allowNull : false,
+        type : Sequelize.STRING
+      },
       quiz_time : {
         allowNull : false,
-        type : Sequelize.TIME
+        type : Sequelize.INTEGER
       },
       number_of_question : {
         allowNull : false,

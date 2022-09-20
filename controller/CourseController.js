@@ -6,6 +6,7 @@ export const addCourse = async(req, res) => {
     try {
         const data =  {
             course_name : req.body.course_name,
+            description : req.body.description,
             organization_code : req.body.organization_code,
             due_date : req.body.due_date,
             created_by : req.body.created_by
@@ -27,6 +28,7 @@ export const updateCourse = async(req, res) => {
     try{
         const data = {
             course_name : req.body.course_name,
+            description : req.body.description,
             organization_code : req.body.organization_code,
             due_date : req.body.due_date,
             created_by : req.body.created_by

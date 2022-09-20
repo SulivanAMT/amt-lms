@@ -1,26 +1,30 @@
-import { validationResult, check } from "express-validator";
+import { check, validationResult } from "express-validator";
 
-export const validateQuiz = [
+const validateQuizContest = [
     check('title')
     .notEmpty()
-    .withMessage('Title tidak boleh kosong')
-    .escape(),
-
-    check('course_id')
-    .notEmpty()
-    .withMessage('Course tidak boleh kosong')
+    .withMessage('Judul kuis tidak boleh kosong')
     .escape(),
 
     check('description')
     .notEmpty()
     .withMessage('Deskripsi tidak boleh kosong')
+    .isLength({ min : 5, max : 255 })
+    .withMessage('Deskripsi minimal panjangnya 5 karakter dan maksimalnya 255 karakter')
     .escape(),
 
     check('quiz_time')
     .notEmpty()
-    .withMessage('Waktu kuis tidak boleh kosong')
+    .withMessage('Waktu tidak boleh kosong')
     .isInt({ min : 5, max : 300 })
     .withMessage('Waktu kuis minimal 5 menit dan maksimal 300 menit')
+    .escape(),
+
+    check('due_date') 
+    .notEmpty()
+    .withMessage('Tanggal due date tidak boleh kosong')
+    .isDate()
+    .withMessage('Tanggal due date harus valid')
     .escape(),
 
     check('number_of_question')
@@ -41,8 +45,10 @@ export const validateQuiz = [
             return res.json({
                 message : errors.array(),
                 is_error : true
-            })
+            });
         }
         next();
     }
 ];
+
+export default validateQuizContest;

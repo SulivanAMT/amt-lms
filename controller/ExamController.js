@@ -9,6 +9,7 @@ export const createExam = async(req, res) => {
         const data = {
             title : req.body.title,
             course_id : req.body.course_id,
+            description : req.body.description,
             exam_time : req.body.exam_time,
             number_of_question : req.body.number_of_question,
             passing_grade : req.body.passing_grade,
@@ -32,6 +33,7 @@ export const updateExam = async(req, res) => {
         const data = {
             title : req.body.title,
             course_id : req.body.course_id,
+            description : req.body.description,
             exam_time : req.body.exam_time,
             number_of_question : req.body.number_of_question,
             passing_grade : req.body.passing_grade,
@@ -231,17 +233,8 @@ export const enrollExam = async(req, res) => {
                 });
             }
         }
-        const splitTime = exam.exam_time.split(":");
         let maxTime = moment(new Date());
-        if(splitTime[0] > 0){
-            maxTime = maxTime.add(splitTime[0],'hours');
-        }
-        if(splitTime[1] > 0){
-            maxTime = maxTime.add(splitTime[1], 'minutes');
-        }
-        if(splitTime[2] > 0){
-            maxTime = maxTime.add(splitTime[2], 'seconds');
-        }
+        maxTime = maxTime.add(exam.exam_time, 'minutes');
         maxTime = maxTime.format('YYYY-MM-DD HH:mm:ss');
         const checkExamsEmployee = await repoCheckExamEmployee(courseEmployeeId, examId);
         if(checkExamsEmployee > 0){
@@ -370,4 +363,8 @@ export const examSubmitAnswer = async(req, res) => {
             is_error : true
         });
     }
+}
+
+export const importExamQuestions = async(req, res) => {
+    
 }

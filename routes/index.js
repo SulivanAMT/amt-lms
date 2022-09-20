@@ -18,6 +18,9 @@ import { validatePosition } from '../validator/Position.js';
 import multer from 'multer';
 import validateExamQuestion from '../validator/ExamQuestion.js';
 import validateQuizQuestion from '../validator/QuizQuestion.js';
+import { createQuizContest, createQuizContestQuestion, deleteQuizContest, deleteQuizContestQuestion, getPrizeByQuizContest, getQuestionByQuizContest, getQuizContest, getQuizContestById, setTheWinnerQuizContest, updateQuizContest, updateQuizContestQuestion } from '../controller/QuizContestController.js';
+import validateQuizContest from '../validator/QuizContest.js';
+import validateQuizContestQuestion from '../validator/QuizContestQuestion.js';
 
 const router = express.Router();
 
@@ -110,11 +113,27 @@ router.post('/quiz_question', verifyToken, validateQuizQuestion, createQuizQuest
 router.delete('/quiz_question/:id', verifyToken, deleteQuizQuestion);
 router.post('/quiz_question/quiz', verifyToken, getQuestionByQuiz);
 
+//Quiz Contest
+router.get('/quiz_contest', verifyToken, getQuizContest);
+router.post('/quiz_contest', verifyToken, validateQuizContest, createQuizContest);
+router.get('/quiz_contest/:id', verifyToken, getQuizContestById);
+router.put('/quiz_contest/:id', verifyToken, validateQuizContest, updateQuizContest);
+router.delete('/quiz_contest/:id', verifyToken, deleteQuizContest);
+
+//Quiz Contest Question
+router.post('/quiz_contest/question', verifyToken, validateQuizContestQuestion, createQuizContestQuestion);
+router.put('/quiz_contest/question/:id', verifyToken, validateQuizContestQuestion, updateQuizContestQuestion);
+router.post('/quiz_contest/question/quiz', verifyToken, getQuestionByQuizContest);
+router.delete('/quiz_contest/question/:id', verifyToken, deleteQuizContestQuestion);
+router.get('/quiz_contest/prize/:id', verifyToken, getPrizeByQuizContest);
+router.post('/quiz_contest/winner', verifyToken, setTheWinnerQuizContest);
+
 /* Learning, Exam & Contest */
 router.post('/learning', verifyToken, RoutingLearning)
 
 /* Monitoring & Reporting */
 
 /* Settings */
+
 
 export default router;

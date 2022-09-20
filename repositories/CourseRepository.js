@@ -3,7 +3,7 @@ import CoursesEmployee from "../db/models/CoursesEmployee.js";
 import Organization from "../db/models/Organization.js";
 import Users from "../db/models/Users.js";
 
-const attributes = ['id','course_name','organization_code','due_date','createdAt','updatedAt'];
+const attributes = ['id','course_name','organization_code','description','due_date','createdAt','updatedAt'];
 const includeModels = [
     {
         model : Users,

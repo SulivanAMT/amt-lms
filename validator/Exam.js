@@ -12,6 +12,11 @@ export const validateExam = [
     .withMessage('Course tidak boleh kosong')
     .escape(),
 
+    check('description')
+    .notEmpty()
+    .withMessage('Deskripsi tidak boleh kosong')
+    .escape(),
+
     check('exam_time')
     .notEmpty()
     .withMessage('Waktu ujian tidak boleh kosong')

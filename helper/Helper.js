@@ -2,6 +2,7 @@ import { repoGetExamByCourse, repoGetQuestionByExam, repoGetQuestionExamById } f
 import { repoGetLessonByCourse } from "../repositories/LessonRepository.js";
 import { repoGetQuestionByQuiz, repoGetQuestionQuizById, repoGetQuizByCourse } from "../repositories/QuizRepository.js";
 import multer from "multer";
+import { repoGetQuestionByQuizContest, repoGetQuestionQuizContestById } from "../repositories/QuizContestRepository.js";
 
 export const errMsg = (msg) => {
     return JSON.stringify(msg) === '{}' ? msg.stack : msg;
@@ -35,9 +36,14 @@ export const calculatePointQuestion = async(questionId, questionType, type) => {
     if(type == 'Exam'){
         question = await repoGetQuestionExamById(questionId);
         allQuestion = await repoGetQuestionByExam(question.exam_id);
-    }else {
+    }
+    else if(type == 'Quiz') {
         question = await repoGetQuestionQuizById(questionId);
         allQuestion = await repoGetQuestionByQuiz(question.quiz_id);
+    }
+    else if(type == 'Quiz Contest') {
+        question = await repoGetQuestionQuizContestById(questionId);
+        allQuestion = await repoGetQuestionByQuizContest(question.quiz_contest_id)   
     }
     let multipleTotal = 0;
     let essayTotal = 0;

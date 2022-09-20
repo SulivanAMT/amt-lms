@@ -8,7 +8,7 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('exams', {
+    await queryInterface.createTable('quiz_contest', {
       id : {
         allowNull: false,
         autoIncrement: true,
@@ -19,17 +19,17 @@ module.exports = {
         allowNull : false,
         type : Sequelize.STRING
       },
-      course_id : {
-        allowNull : false,
-        type : Sequelize.INTEGER
-      },
-      description: {
+      description : {
         allowNull : false,
         type : Sequelize.STRING
       },
-      exam_time : {
+      quiz_time : {
         allowNull : false,
         type : Sequelize.INTEGER
+      },
+      due_date : {
+        allowNull : false,
+        type : Sequelize.DATEONLY
       },
       number_of_question : {
         allowNull : false,
@@ -38,10 +38,6 @@ module.exports = {
       created_by : {
         allowNull : false,
         type : Sequelize.INTEGER
-      },
-      passing_grade : {
-        allowNull : false,
-        type : Sequelize.FLOAT
       },
       createdAt: {
         allowNull: false,
@@ -61,6 +57,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-     await queryInterface.dropTable('exams');
+     await queryInterface.dropTable('quiz_contest');
   }
 };

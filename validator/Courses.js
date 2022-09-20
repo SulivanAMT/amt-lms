@@ -14,6 +14,11 @@ export const validateCourse = [
     .withMessage('Organisasi tidak boleh kosong')
     .escape(),
 
+    check('description')
+    .notEmpty()
+    .withMessage('Deskripsi tidak boleh kosong')
+    .escape(),
+
     check('due_date')
     .isDate()
     .withMessage('Due date harus menggunakan tanggal yang valid')

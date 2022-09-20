@@ -8,6 +8,7 @@ export const createQuiz = async(req, res) => {
         const data = {
             title : req.body.title,
             course_id : req.body.course_id,
+            description : req.body.description,
             quiz_time : req.body.quiz_time,
             number_of_question : req.body.number_of_question,
             created_by : req.body.created_by
@@ -30,6 +31,7 @@ export const updateQuiz = async(req, res) => {
         const data = {
             title : req.body.title,
             course_id : req.body.course_id,
+            description : req.body.description,
             quiz_time : req.body.quiz_time,
             number_of_question : req.body.number_of_question,
             created_by : req.body.created_by
@@ -210,17 +212,8 @@ export const enrollQuiz = async(req, res) => {
                 is_error : true
             });
         }
-        const splitTime = quiz.quiz_time.split(":");
         let maxTime = moment(new Date());
-        if(splitTime[0] > 0){
-            maxTime = maxTime.add(splitTime[0],'hours');
-        }
-        if(splitTime[1] > 0){
-            maxTime = maxTime.add(splitTime[1], 'minutes');
-        }
-        if(splitTime[2] > 0){
-            maxTime = maxTime.add(splitTime[2], 'seconds');
-        }
+        maxTime = maxTime.add(quiz.quiz_time, 'minutes');
         maxTime = maxTime.format('YYYY-MM-DD HH:mm:ss');
         const quizEmployee = await repoCheckQuizEmployee(courseEmployeeId, quizId);
         if(quizEmployee){ //jika quiz ingin di retake

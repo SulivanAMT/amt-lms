@@ -8,40 +8,24 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('exams', {
+    await queryInterface.createTable('quiz_contest_multiple_choice', {
       id : {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title : {
+      contest_question_id : {
+        allowNull : false,
+        type : Sequelize.INTEGER
+      },
+      choice_name : {
         allowNull : false,
         type : Sequelize.STRING
       },
-      course_id : {
+      choice_type : {
         allowNull : false,
-        type : Sequelize.INTEGER
-      },
-      description: {
-        allowNull : false,
-        type : Sequelize.STRING
-      },
-      exam_time : {
-        allowNull : false,
-        type : Sequelize.INTEGER
-      },
-      number_of_question : {
-        allowNull : false,
-        type : Sequelize.INTEGER
-      },
-      created_by : {
-        allowNull : false,
-        type : Sequelize.INTEGER
-      },
-      passing_grade : {
-        allowNull : false,
-        type : Sequelize.FLOAT
+        type : Sequelize.ENUM('A','B','C','D','E')
       },
       createdAt: {
         allowNull: false,
@@ -61,6 +45,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-     await queryInterface.dropTable('exams');
+     await queryInterface.dropTable('quiz_contest_multiple_choice');
   }
 };

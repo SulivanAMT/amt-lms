@@ -16,12 +16,19 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       course_name : {
+        allowNull : false,
+        type : Sequelize.STRING
+      },
+      description : {
+        allowNull : false,
         type : Sequelize.STRING
       },
       organization_code : {
+        allowNull : false,
         type : Sequelize.STRING
       },
       due_date : {
+        allowNull : false,
         type : Sequelize.DATEONLY
       },
       created_by : {
