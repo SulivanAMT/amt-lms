@@ -6,6 +6,7 @@ import cors from "cors";
 import db from './config/database.js';
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 
 dotenv.config();    
 
@@ -16,6 +17,7 @@ app.use(cors({
     origin : "http://localhost:3000"
 }));
 app.use('/', indexRouter);
+app.use(bodyParser.json());
 
 try {
     await db.authenticate();

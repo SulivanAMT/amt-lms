@@ -3,6 +3,9 @@ import { repoGetCourseEmpById, repoUpdateCourseEmployee } from "../repositories/
 import { repoGetExamByCourse } from "../repositories/ExamRepository.js";
 import { repoCompletedSubLesson, repoCreateLesson, repoCreateLessonContent, repoDeleteLesson, repoDeleteLessonContent, repoGetLesson, repoGetLessonByCourse, repoGetLessonById, repoGetLessonContentById, repoGetLessonContentByLesson, repoGetLessonsEmpByIdAndLesson, repoUpdateLesson, repoUpdateLessonContent } from "../repositories/LessonRepository.js";
 import { repoGetQuizByCourse } from "../repositories/QuizRepository.js";
+import multer from "multer";
+import uploadFileMiddleware from "../middleware/uploadFile.js";
+import fs from "fs";
 
 export const addLesson = async(req, res) => {
     try {
@@ -143,7 +146,8 @@ export const updateLessonContent = async(req, res) => {
     try {
         const data = {
             lesson_id : req.body.lesson_id,
-            lesson_content : req.body.lesson_content,
+            lesson_detail_title : req.body.lesson_detail_title,
+            lesson_content : req.body.lesson_content
         };
         await repoUpdateLessonContent(data, req.params.id);
         return res.json({
@@ -239,4 +243,62 @@ export const getLessonContentById = async(req, res) => {
             is_error : true
         });
     }
+}
+
+export const uploadImageLesson = async(req, res) => {
+    try {
+        await uploadFileMiddleware(req ,res);
+        const file = req.file;
+        if (!file) {
+            return res.json({ 
+                message: 'Please upload a file.',
+                is_error : true
+            });
+        }
+        return res.json({ 
+            data : {
+                url : `http://127.0.0.1:3001/lesson/image/${file.filename}`,
+            },
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : err,
+            is_error : true
+        });
+    }
+}
+
+export const deleteImageLesson = async(req, res) => {
+    if(!req.params.imageName){
+        return res.json({
+            message : 'Image required',
+            is_error : true
+        })
+    }else{
+        try {
+            fs.unlinkSync('contents/'+req.params.imageName);
+            return res.json({
+                message : 'Image has been deleted',
+                is_error : false
+            });
+          } catch (err) {
+            return res.json({
+                message : err,
+                is_error : true
+            });
+        }
+    }
+}
+
+export const getImageContent = (req, res) => {
+    fs.readFile(`contents/${req.params.imageName}`, (err, image) => {
+        if(err){
+            return res.json({
+                message : 'Image not found',
+                is_error : true
+            });
+        }
+        res.end(image);
+    });
 }

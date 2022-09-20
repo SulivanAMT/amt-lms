@@ -6,23 +6,28 @@ import Users from "../db/models/Users.js";
 export const validateCourse = [
     check('course_name')
     .notEmpty()
-    .withMessage('Nama course tidak boleh kosong'),
+    .withMessage('Nama course tidak boleh kosong')
+    .escape(),
 
     check('organization_code')
     .notEmpty()
-    .withMessage('Organisasi tidak boleh kosong'),
+    .withMessage('Organisasi tidak boleh kosong')
+    .escape(),
 
     check('due_date')
     .isDate()
-    .withMessage('Due date harus menggunakan tanggal yang valid'),
+    .withMessage('Due date harus menggunakan tanggal yang valid')
+    .escape(),
 
     check('created_by')
     .notEmpty()
-    .withMessage('Creator tidak boleh kosong'),
+    .withMessage('Creator tidak boleh kosong')
+    .escape(),
+    
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
-            return res.status(500).json({
+            return res.json({
                 message : errors.array(),
                 is_error : true
             });

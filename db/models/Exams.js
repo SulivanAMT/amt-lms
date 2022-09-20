@@ -10,7 +10,7 @@ const Exams = db.define('exams', {
         type : Sequelize.INTEGER
     },
     exam_time : {
-        type : Sequelize.TIME
+        type : Sequelize.INTEGER
     },
     number_of_question : {
         type : Sequelize.INTEGER

@@ -66,7 +66,7 @@ export const repoGetCourse = async() => {
 }
 
 export const repoGetCourseByOrg = async(org) => {
-    const course = await Courses.findOne({
+    const course = await Courses.findAll({
         where : {
             organization_code : org
         },

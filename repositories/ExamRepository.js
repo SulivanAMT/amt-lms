@@ -112,7 +112,7 @@ export const repoUpdateExamQuestion = async(data, id) => {
 }
 
 export const repoGetQuestionExam = async(exam, questionNumber) => {
-    const examQuestion = await ExamsQuestions.findAll({
+    const examQuestion = await ExamsQuestions.findOne({
         where : {
             exam_id : exam,
             question_number : questionNumber

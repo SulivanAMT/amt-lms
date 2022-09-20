@@ -112,7 +112,7 @@ export const repoUpdateQuizQuestion = async(data, id) => {
 }
 
 export const repoGetQuestionQuiz = async(quiz, questionNumber) => {
-    const quizQuestion = await QuizQuestions.findAll({
+    const quizQuestion = await QuizQuestions.findOne({
         where : {
             quiz_id : quiz,
             question_number : questionNumber

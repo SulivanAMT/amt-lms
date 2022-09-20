@@ -26,6 +26,12 @@ const Users = db.define('users', {
   },
   refresh_token : {
     type : DataTypes.STRING,
+  },
+  status : {
+    type : DataTypes.ENUM('Actived', 'Deactived')
+  },
+  position_code : {
+    type : DataTypes.STRING
   }
 },{
   freezeTableName: true

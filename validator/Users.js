@@ -1,43 +1,60 @@
 import { check, validationResult } from "express-validator";
+import { Op } from "sequelize";
 import Organization from "../db/models/Organization.js";
 import Position from "../db/models/Position.js";
 import Roles from "../db/models/Roles.js";
 import Users from "../db/models/Users.js";
 
 export const validateUser = [
-    check('name').
-    notEmpty().withMessage('Nama tidak boleh kosong'),
+    check('name')
+    .notEmpty()
+    .withMessage('Nama tidak boleh kosong')
+    .escape(),
 
-    check('email').
-    isEmail().withMessage('Email tidak valid').
-    notEmpty().withMessage('Email tidak boleh kosong'),
+    check('email')
+    .isEmail()
+    .withMessage('Email tidak valid')
+    .notEmpty()
+    .withMessage('Email tidak boleh kosong')
+    .escape(),
 
-    check('password').
-    isLength({ min : 5 }).
-    optional().
-    withMessage('Password minimal 5 karakter'),
+    check('password')
+    .isLength({ min : 5 })
+    .optional()
+    .withMessage('Password minimal 5 karakter')
+    .escape(),
     
-    check('phone_number').
-    isInt().withMessage('No hp harus mengandung angka').
-    notEmpty().withMessage('No hp tidak boleh kosong'),
+    check('phone_number')
+    .isInt()
+    .withMessage('No hp harus mengandung angka')
+    .notEmpty()
+    .withMessage('No hp tidak boleh kosong')
+    .escape(),
     
     check('organization')
     .notEmpty()
-    .withMessage('Organisasi belum di isi'),
+    .withMessage('Organisasi belum di isi')
+    .escape(),
 
     check('position')
     .notEmpty()
-    .withMessage('Posisi / jabatan belum di isi'),
+    .withMessage('Posisi / jabatan belum di isi')
+    .escape(),
 
-    check('roles').
-    notEmpty().withMessage('Roles belum di isi'),
+    check('roles')
+    .notEmpty()
+    .withMessage('Roles belum di isi')
+    .escape(),
 
-    check('status').
-    notEmpty().withMessage('Status employee belum di isi'),
+    check('status')
+    .notEmpty()
+    .withMessage('Status employee belum di isi')
+    .escape(),
+
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
-            return res.status(500).json({
+            return res.json({
                 message : errors.array(),
                 is_error : true
             });
@@ -75,12 +92,12 @@ export const validateDataUser = async(req, res, next) => {
         })
     }
     if(req.method == "PUT" || req.method == "DELETE" || req.method == "GET"){
-        if(req.method == "put"){
+        if(req.method == "PUT"){
             checkEmail = await Users.count({
                 where : {
                     email : req.body.email,
                     id : {
-                        $not : req.params.id
+                        [Op.ne] : req.params.id
                     }
                 }
             });   
@@ -91,18 +108,18 @@ export const validateDataUser = async(req, res, next) => {
             }
         });
     }       
-    var token = req.headers.authorization;
-    checkToken = await Users.count({
-        where : {
-            token : token.replace('Bearer ', '')
-        }
-    }) 
-    if(checkToken == 0){
-        return res.json({
-            is_error : true,
-            message : 'Unauthorized'
-        })
-    }
+    // var token = req.headers.authorization;
+    // checkToken = await Users.count({
+    //     where : {
+    //         refresh_token : token.replace('Bearer ', '')
+    //     }
+    // }) 
+    // if(checkToken == 0){
+    //     return res.json({
+    //         is_error : true,
+    //         message : 'Unauthorized'
+    //     })
+    // }
     if(checkEmail > 0){
         return res.json({
              is_error : true,

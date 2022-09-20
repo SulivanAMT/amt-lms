@@ -34,6 +34,7 @@ export const updateExam = async(req, res) => {
             course_id : req.body.course_id,
             exam_time : req.body.exam_time,
             number_of_question : req.body.number_of_question,
+            passing_grade : req.body.passing_grade,
             created_by : req.body.created_by
         };
         await repoUpdateExam(data, req.params.id);

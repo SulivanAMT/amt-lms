@@ -28,7 +28,7 @@ const includeModelsLesson = [
 const includeModelsLessonContent = {
     model : Lessons,
     foreignKey : 'lesson_id',
-    attributes : ['id', 'lesson_title','created_by']
+    attributes : ['id', 'lesson_title','course_id','created_by']
 }
 
 export const repoCreateLesson = async(data) => {
@@ -118,7 +118,8 @@ export const repoGetLessonContentById = async(id) => {
     return await LessonsDetail.findOne({
         where : {
             id : id
-        }
+        },
+         include : includeModelsLessonContent
     });
 }
 

@@ -21,10 +21,11 @@ export const login = async(req, res) => {
         const userId = user.id;
         const name = user.name;
         const email = user.email;
-        const refreshToken = jwt.sign({userId, name, email}, process.env.REFRESH_TOKEN_SECRET,{
+        const roles = user.roles;
+        const refreshToken = jwt.sign({userId, name, email, roles}, process.env.REFRESH_TOKEN_SECRET,{
             expiresIn : '1d'
         });
-        const accessToken = jwt.sign({userId, name, email}, process.env.ACCESS_TOKEN_SECRET,{
+        const accessToken = jwt.sign({userId, name, email, roles}, process.env.ACCESS_TOKEN_SECRET,{
             expiresIn : '30s'
         });
         await repoUpdateUser({refresh_token : refreshToken}, userId);
@@ -38,7 +39,8 @@ export const login = async(req, res) => {
             data : {
                 user_id : userId,
                 name : name,
-                email : email
+                email : email,
+                role : roles
             },
             token : accessToken,
             is_error : false,
@@ -77,9 +79,12 @@ export const logout = async(req, res) => {
 export const refreshToken = async(req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken;
-        if(!refreshToken) return res.sendStatus(401);
+        if(!refreshToken) return res.json({
+            message : 'Bearer token kosong',
+            is_error : true           
+        });
         const user = await repoGetByToken(refreshToken);
-        if(user.length == 0){
+        if(!user){
             return res.json({
                 message : 'Error has occured',
                 is_error : true
@@ -95,7 +100,8 @@ export const refreshToken = async(req, res) => {
             const userId = user.id;
             const name = user.name;
             const email = user.email;
-            const accessToken = jwt.sign({userId, name, email}, process.env.ACCESS_TOKEN_SECRET,{
+            const roles = user.roles;
+            const accessToken = jwt.sign({userId, name, email, roles}, process.env.ACCESS_TOKEN_SECRET,{
                 expiresIn: '15s'
             });
             res.json({

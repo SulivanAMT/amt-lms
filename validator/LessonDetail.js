@@ -15,7 +15,7 @@ export const validateLessonDetail = [
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
-            return res.status(500).json({
+            return res.json({
                 message : errors.array(),
                 is_error : true
             });

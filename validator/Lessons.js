@@ -10,11 +10,12 @@ export const validateLesson = [
 
     check('lesson_title')
     .notEmpty()
-    .withMessage('Judul lesson tidak boleh kosong'),
+    .withMessage('Judul lesson tidak boleh kosong')
+    .escape(),
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
-            return res.status(500).json({
+            return res.json({
                 message : errors.array(),
                 is_error : true
             });

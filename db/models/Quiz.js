@@ -11,7 +11,7 @@ const Quiz = db.define('quiz', {
         type : Sequelize.INTEGER
     },
     quiz_time : {
-        type : Sequelize.TIME
+        type : Sequelize.INTEGER
     },
     number_of_question : {
         type : Sequelize.INTEGER

@@ -1,6 +1,7 @@
 import { repoGetExamByCourse, repoGetQuestionByExam, repoGetQuestionExamById } from "../repositories/ExamRepository.js";
 import { repoGetLessonByCourse } from "../repositories/LessonRepository.js";
 import { repoGetQuestionByQuiz, repoGetQuestionQuizById, repoGetQuizByCourse } from "../repositories/QuizRepository.js";
+import multer from "multer";
 
 export const errMsg = (msg) => {
     return JSON.stringify(msg) === '{}' ? msg.stack : msg;
