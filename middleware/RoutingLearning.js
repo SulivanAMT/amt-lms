@@ -1,4 +1,4 @@
-import { enrollCourse } from "../controller/CourseController.js";
+import { enrollCourse, getListContent } from "../controller/CourseController.js";
 import { enrollExam, examAnswerQuestion, examSubmitAnswer } from "../controller/ExamController.js";
 import { completedLessonContent } from "../controller/LessonController.js";
 import { enrollQuizContest, quizContestAnswer, quizContestSubmit } from "../controller/QuizContestController.js";
@@ -38,6 +38,9 @@ export const RoutingLearning = async(req, res) => {
         break;
         case 'quiz_contest_submit_answer' :
             await quizContestSubmit(req, res);
+        break;
+        case 'get_list_content' : 
+            await getListContent(req, res);
         break;
         default : 
             res.json({

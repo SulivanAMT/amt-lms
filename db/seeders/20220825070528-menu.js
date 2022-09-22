@@ -44,7 +44,7 @@ module.exports = {
       menu_name : 'Score',
       menu_url : '/home/reporting/score',
       menu_icon : '',
-      modul_id : 6,
+      modul_id : 7,
       createdAt : new Date(),
       updatedAt : new Date()
     },
@@ -53,7 +53,7 @@ module.exports = {
       menu_name : 'KPI Report',
       menu_url : '/home/reporting/performance',
       menu_icon : '',
-      modul_id : 6,
+      modul_id : 7,
       createdAt : new Date(),
       updatedAt : new Date()
     },
@@ -62,7 +62,7 @@ module.exports = {
       menu_name : 'Roles & Permission',
       menu_url : '/home/settings/roles_permission',
       menu_icon : '',
-      modul_id : 7,
+      modul_id : 8,
       createdAt : new Date(),
       updatedAt : new Date()
     },
@@ -71,7 +71,7 @@ module.exports = {
       menu_name : 'Modul & Menu',
       menu_url : '/home/settings/modul_menu',
       menu_icon : '',
-      modul_id : 7,
+      modul_id : 8,
       createdAt : new Date(),
       updatedAt : new Date()
     },
@@ -80,7 +80,7 @@ module.exports = {
       menu_name : 'KPI Setting',
       menu_url : '/home/settings/kpi',
       menu_icon : '',
-      modul_id : 7,
+      modul_id : 8,
       createdAt : new Date(),
       updatedAt : new Date()
     },
@@ -162,6 +162,33 @@ module.exports = {
       menu_url : '/home/result_quiz',
       menu_icon : '',
       modul_id : 5,
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 18,
+      menu_name : 'Manage Quiz Contest',
+      menu_url : '/home/quiz_contest',
+      menu_icon : '',
+      modul_id : 6,
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 19,
+      menu_name : 'Result Quiz Contest',
+      menu_url : '/home/result_quiz_contest',
+      menu_icon : '',
+      modul_id : 6,
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 20,
+      menu_name : 'Winner Quiz Contest',
+      menu_url : '/home/winner_quiz_contest',
+      menu_icon : '',
+      modul_id : 6,
       createdAt : new Date(),
       updatedAt : new Date()
     },

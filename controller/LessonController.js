@@ -1,7 +1,7 @@
-import { getProgress } from "../helper/Helper.js";
+import { errMsg, getProgress } from "../helper/Helper.js";
 import { repoGetCourseEmpById, repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
 import { repoGetExamByCourse } from "../repositories/ExamRepository.js";
-import { repoCompletedSubLesson, repoCreateLesson, repoCreateLessonContent, repoDeleteLesson, repoDeleteLessonContent, repoGetLesson, repoGetLessonByCourse, repoGetLessonById, repoGetLessonContentById, repoGetLessonContentByLesson, repoGetLessonsEmpByIdAndLesson, repoUpdateLesson, repoUpdateLessonContent } from "../repositories/LessonRepository.js";
+import { repoCompletedSubLesson, repoCreateLesson, repoCreateLessonContent, repoDeleteLesson, repoDeleteLessonContent, repoGetFirstLesson, repoGetLesson, repoGetLessonByCourse, repoGetLessonById, repoGetLessonContentById, repoGetLessonContentByLesson, repoGetLessonsEmpByIdAndLesson, repoUpdateLesson, repoUpdateLessonContent } from "../repositories/LessonRepository.js";
 import { repoGetQuizByCourse } from "../repositories/QuizRepository.js";
 import multer from "multer";
 import uploadFileMiddleware from "../middleware/uploadFile.js";
@@ -197,6 +197,15 @@ export const completedLessonContent = async(req, res) => {
             });
         }
         let previousLesson = lessonDetailId - 1;
+        let arrLesson = [];
+        const allLesson = await repoGetLessonByCourse(courseEmployee.course_id);
+        allLesson.map((lesson, i) => {
+            lesson.lessons_details.map((detail, x) => {
+                arrLesson.push(detail.id);
+            })
+        });
+        const foundIndex = arrLesson.findIndex(e => e == lessonDetailId);
+        const nextLesson = arrLesson[foundIndex+1];
         const getLesson = await repoGetLessonContentById(previousLesson);
         if(getLesson){
             const lessonEmployee = await repoGetLessonsEmpByIdAndLesson(courseEmployeeId, getLesson.id);
@@ -219,12 +228,15 @@ export const completedLessonContent = async(req, res) => {
             await repoUpdateCourseEmployee({ progress : courseEmployee.progress + await getProgress(courseEmployee.course_id) }, courseEmployeeId);
         }
         return res.json({
+            data : {
+                next_lesson : nextLesson
+            },
             message : 'Lesson Completed',
             is_error : false
         });
     } catch(err) {
         return res.json({
-            message : err,
+            message : errMsg(err),
             is_error : true
         });
     }
@@ -232,7 +244,7 @@ export const completedLessonContent = async(req, res) => {
 
 export const getLessonContentById = async(req, res) => {
     try {
-        const lesson = await repoGetLessonContentById(req.params.id);
+        const lesson = await repoGetLessonContentById(req.params.id);   
         return res.json({
             data : lesson,
             is_error : false
@@ -301,4 +313,21 @@ export const getImageContent = (req, res) => {
         }
         res.end(image);
     });
+}
+
+export const getFirstLesson = async(req, res) => {
+    try {
+        const firstLesson = await repoGetFirstLesson(req.params.courseId);
+        return res.json({
+            data : {
+                id : firstLesson,
+            },
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        })
+    }
 }

@@ -1,3 +1,4 @@
+import { Op, where } from "sequelize";
 import { Sequelize } from "sequelize";
 import Courses from "../db/models/Courses.js";
 import CoursesEmployee from "../db/models/CoursesEmployee.js";
@@ -213,6 +214,87 @@ export const repoUpdateExamEmployee = async(data, id) => {
     await ExamsEmployee.update(data, {
         where : {
             id : id
+        }
+    });
+}
+
+export const repoGetMyExams = async(employeeId) => {
+    return await Exams.findAll({
+        attributes : [
+            'id',
+            'title',
+            'description',
+            'exam_time',
+            'number_of_question',
+            'passing_grade',
+        ],
+        include : {
+            model : Courses,
+            foreignKey : 'course_id',
+            attributes : [
+                'course_name',
+                [Sequelize.literal(`( SELECT b.status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'status_exams']
+            ],
+            include : {
+                model : Organization,
+                foreignKey : 'organization_code',
+                attributes : ['organization_code','organization_name']
+            },
+            where :{
+                id :{
+                    [Op.in] : Sequelize.literal(`(SELECT course_id FROM courses_employee WHERE employee_id='${employeeId}')`)
+                }
+            }
+        }
+    });
+}
+
+export const repoGetExamEmpByEmployee = async(courseId, employeeId) => {
+    return await Exams.findAll({
+        attributes : ['id','title',[Sequelize.literal(`'exam'`),'learning_type']],
+        include : {
+            model : Courses,
+            foreignKey : 'course_id',
+            attributes : [
+                'course_name',
+                [Sequelize.literal(`(SELECT b.status FROM courses_employee a, exams_employee b WHERE a.id=b.course_employee_id AND a.course_id=course.id AND a.employee_id='${employeeId} ')`),'status_exam'],
+                [Sequelize.literal(`(SELECT id FROM courses_employee WHERE course_id=course.id AND employee_id='${employeeId}')`),'course_employee_id']
+            ],
+        },
+        where : {
+            course_id : courseId,
+            id : {
+                [Op.in] : Sequelize.literal(`(SELECT a.id FROM exams a, courses_employee b WHERE a.course_id=b.course_id AND b.course_id=course.id AND b.employee_id='${employeeId}')`)
+            }
+        }
+    })
+}
+
+export const repoGetMyExamEmpByExam = async(examId, employeeId) => {
+    return await Exams.findOne({
+        attributes : [
+            'id',
+            'title',
+            'description',
+            'exam_time',
+            'number_of_question',
+            'passing_grade',
+        ],
+        include : {
+            model : Courses,
+            foreignKey : 'course_id',
+            attributes : [
+                'course_name',
+                [Sequelize.literal(`( SELECT b.status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'status_exams'],
+                [Sequelize.literal(`( SELECT b.score FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'score'],
+                [Sequelize.literal(`( SELECT b.passed_status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'passed_status'],
+                [Sequelize.literal(`( SELECT b.status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'status_exams']
+            ]
+        },
+        where :{
+            id : {
+                [Op.in] : Sequelize.literal(`(SELECT a.id FROM exams a, courses_employee b WHERE a.id='${examId}' AND a.course_id=b.course_id AND b.course_id=course.id AND b.employee_id='${employeeId}')`)
+            }
         }
     });
 }

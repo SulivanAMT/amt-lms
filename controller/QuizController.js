@@ -1,5 +1,5 @@
 import { calculatePointQuestion, errMsg, getProgress, lower } from "../helper/Helper.js";
-import { repoCheckQuizEmployee, repoCreateQuiz, repoCreateQuizQuestion, repoDeleteQuiz, repoDeleteQuizEmployeeAnswer, repoDeleteQuizQuestion, repoEnrollQuiz, repoGetQuestionQuiz, repoGetQuestionQuizById, repoGetQuiz, repoGetQuizByCourse, repoGetQuizById, repoGetQuizEmployeeAnswer, repoGetQuizEmployeeById, repoQuizAnswerQuestion, repoSumPointByQuizEmp, repoUnEnrollQuiz, repoUpdateQuiz, repoUpdateQuizEmp, repoUpdateQuizQuestion } from "../repositories/QuizRepository.js";
+import { repoCheckQuizEmployee, repoCreateQuiz, repoCreateQuizQuestion, repoDeleteQuiz, repoDeleteQuizEmployeeAnswer, repoDeleteQuizQuestion, repoEnrollQuiz, repoGetMyQuiz, repoGetQuestionQuiz, repoGetQuestionQuizById, repoGetQuiz, repoGetQuizByCourse, repoGetQuizById, repoGetQuizEmpByQuiz, repoGetQuizEmployeeAnswer, repoGetQuizEmployeeById, repoQuizAnswerQuestion, repoSumPointByQuizEmp, repoUnEnrollQuiz, repoUpdateQuiz, repoUpdateQuizEmp, repoUpdateQuizQuestion } from "../repositories/QuizRepository.js";
 import moment from "moment";
 import { repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
 
@@ -238,8 +238,11 @@ export const enrollQuiz = async(req, res) => {
             max_time : maxTime,
             status : status
         };
-        await repoEnrollQuiz(data);
+        const enroll = await repoEnrollQuiz(data);
         return res.json({
+            data : {
+                quiz_employee_id : enroll.id
+            },
             message : 'Quiz telah dimulai dan batas submit pada '+maxTime,
             is_error : false
         });        
@@ -338,6 +341,36 @@ export const quizSubmitAnswer = async(req, res) => {
         }, quizEmployee.courses_employee.id);
         return res.json({
             message : 'Quiz berhasil disubmit',
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        });
+    }
+}
+
+export const getMyQuiz = async(req, res) => {
+    try {
+        const quizEmployee = await repoGetMyQuiz(req.body.employee_id);
+        return res.json({
+            data : quizEmployee,
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        })
+    }
+}
+
+export const getMyQuizEmpByQuiz = async(req, res) =>{
+    try {
+        const quiz = await repoGetQuizEmpByQuiz(req.body.quiz_id, req.body.employee_id);
+        return res.json({
+            data : quiz,
             is_error : false
         });
     } catch(err) {

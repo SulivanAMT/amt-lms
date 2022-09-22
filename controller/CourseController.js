@@ -1,6 +1,10 @@
-import { repoCreateCourse, repoCourseByID, repoGetCourse, repoDeleteCourse, repoGetCourseByOrg, repoUpdateCourse, repoCheckCourseEmployee, repoCreateCourseEmployee } from "../repositories/CourseRepository.js";
+import { repoCreateCourse, repoCourseByID, repoGetCourse, repoDeleteCourse, repoGetCourseByOrg, repoUpdateCourse, repoCheckCourseEmployee, repoCreateCourseEmployee, repoGetMyCourses } from "../repositories/CourseRepository.js";
 import { repoUserById } from "../repositories/UserRepository.js";
 import moment from 'moment';
+import { errMsg } from "../helper/Helper.js";
+import { repoGetFirstLesson, repoGetLessonByCourse, repoGetLessonByCourseEmp } from "../repositories/LessonRepository.js";
+import { repoGetExamByCourse, repoGetExamEmpByEmployee } from "../repositories/ExamRepository.js";
+import { repoGetQuizByCourse, repoGetQuizEmpByEmployee } from "../repositories/QuizRepository.js";
 
 export const addCourse = async(req, res) => {
     try {
@@ -138,6 +142,7 @@ export const enrollCourse = async(req ,res) => {
                 is_error : true
             });
         }
+        const firstLesson = await repoGetFirstLesson(courseId);
         const data = {
             employee_id : employeeId,
             course_id : courseId,
@@ -146,6 +151,9 @@ export const enrollCourse = async(req ,res) => {
         };
         await repoCreateCourseEmployee(data);
         return res.json({
+            data : {
+                first_lesson : firstLesson
+            },
             message : 'Course berhasil di enroll',
             is_error : false
         });
@@ -162,9 +170,43 @@ export const unEnrollCourse = async(req, res) => {
 }
 
 export const getMyCourses = async(req, res) => {
-
+    try {
+        const myCourses = await repoGetMyCourses(req.body.employee_id);
+        return res.json({
+            data : myCourses,
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        })
+    }
 }
 
 export const updateCourseEmployee = async(req, res) => {
 
+}
+
+export const getListContent = async(req, res) => {
+    try {
+        const employeeId = req.body.data.employee_id
+        const courseId = req.body.data.course_id;
+        const lessonsEmp = await repoGetLessonByCourseEmp(courseId, employeeId);
+        const exams = await repoGetExamEmpByEmployee(courseId, employeeId);
+        const quiz = await repoGetQuizEmpByEmployee(courseId, employeeId);
+        return res.json({
+            data : {
+                lessons : lessonsEmp,
+                quiz : quiz,
+                exams : exams,
+            },
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        })
+    }
 }

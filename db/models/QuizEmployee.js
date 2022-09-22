@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import db from "../../config/database.js";
 import CoursesEmployee from "./CoursesEmployee.js";
+import Quiz from "./Quiz.js";
 
 const QuizEmployee = db.define('quiz_employee', {
     course_employee_id : {
@@ -33,6 +34,10 @@ const QuizEmployee = db.define('quiz_employee', {
 
 QuizEmployee.belongsTo(CoursesEmployee, {
     foreignKey : 'course_employee_id'
-})
+});
+
+QuizEmployee.belongsTo(Quiz, {
+    foreignKey : 'quiz_id'
+});
 
 export default QuizEmployee;

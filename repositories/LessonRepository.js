@@ -1,17 +1,14 @@
 import Courses from "../db/models/Courses.js";
 import { Lessons, LessonsDetail, LessonsEmployee } from "../db/models/relationship/LessonRelation.js";
 import Organization from "../db/models/Organization.js";
+import Sequelize, { Op } from "sequelize";
+import CoursesEmployee from "../db/models/CoursesEmployee.js";
 
 const includeModelsLesson = [
     {
         model : LessonsDetail,
         foreignKey : 'lesson_id',
-        attributes : ['lesson_detail_title','lesson_content'],
-        include : {
-            model : LessonsEmployee,
-            foreignKey : 'lesson_detail_id',
-            attributes : ['status','point']
-        }
+        attributes : ['id','lesson_detail_title'],
     },
     {
         model : Courses,
@@ -129,4 +126,65 @@ export const repoGetLessonEmpByCourseEmp = async(courseEmployeeId) => {
             course_employee_id : courseEmployeeId
         }
     });
+}
+
+export const repoGetFirstLesson = async(courseId) => {
+    return await LessonsDetail.min('lessons_detail.id', {
+        include : {
+            model : Lessons,
+            foreignKey : 'lesson_id',
+            attributes : ['lesson_title'],
+            where : {
+                course_id : courseId
+            }
+        }
+    });
+}
+
+export const repoGetLastLesson = async(courseId) => {
+    return await LessonsDetail.max('lessons_detail.id', {
+        include : {
+            model : Lessons,
+            foreignKey : 'lesson_id',
+            attributes : ['lesson_title'],
+            where : {
+                course_id : courseId
+            }
+        }
+    });
+}
+
+export const repoGetLessonByCourseEmp = async(courseId, employeeId) => {
+    return await Lessons.findAll({
+        attributes : ['id', 'course_id', 'lesson_title',[Sequelize.literal(`'lesson'`), 'learning_type']],
+        include : [
+            {
+                model : LessonsDetail,
+                foreignKey : 'lesson_id',
+                attributes : ['id','lesson_detail_title'],
+                include : {
+                    model : LessonsEmployee,
+                    foreignKey : 'lesson_detail_id',
+                    attributes : ['course_employee_id','status'],
+                },
+                where : {
+                    id : {
+                        [Op.in] : Sequelize.literal(`(SELECT b.id FROM lessons a, lessons_detail b, courses_employee c WHERE a.id=b.lesson_id AND a.course_id=c.course_id AND c.course_id='${courseId}' AND c.employee_id='${employeeId}')`)
+                    }
+                }
+            },
+            {
+                model : Courses,
+                foreignKey : 'course_id',
+                attributes : [
+                    'course_name',
+                    [Sequelize.literal(`(SELECT b.status FROM courses_employee a, lessons_employee b WHERE course.id=a.course_id AND a.employee_id='${employeeId}' AND a.id=b.course_employee_id AND lesson_detail_id=lessons_details.id)`), 'status_lesson'],
+                    [Sequelize.literal(`(SELECT id FROM courses_employee a WHERE a.employee_id='${employeeId}' AND a.course_id=course.id)`),'course_employee_id']
+                ],
+                where : {
+                    id : courseId
+                }
+            }
+        ]
+    })
 }

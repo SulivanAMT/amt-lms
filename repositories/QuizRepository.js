@@ -7,6 +7,7 @@ import QuizEmployee from "../db/models/QuizEmployee.js";
 import QuizEmployeeAnswer from "../db/models/QuizEmployeeAnswer.js";
 import CoursesEmployee from "../db/models/CoursesEmployee.js";
 import Sequelize from "sequelize";
+import { Op } from "sequelize";
 
 export const repoCreateQuiz = async(data) => {
     await Quiz.create(data);
@@ -150,7 +151,7 @@ export const repoGetQuestionByQuiz = async(quizId) => {
 }
 
 export const repoEnrollQuiz = async(data) => {
-    await QuizEmployee.create(data);
+    return await QuizEmployee.create(data);
 }
 
 export const repoQuizAnswerQuestion = async(data) => {
@@ -221,6 +222,77 @@ export const repoUpdateQuizEmp = async(data, id) => {
     await QuizEmployee.update(data, {
         where : {
             id : id
+        }
+    });
+}
+
+export const repoGetMyQuiz = async(employeeId) => {
+    return await Quiz.findAll({
+        attributes : [
+            'id',
+            'title',
+            'description',
+            'quiz_time',
+            'number_of_question'
+        ],
+        include : {
+            model : Courses,
+            foreignKey : 'course_id',
+            attributes : [
+                'course_name',
+                [Sequelize.literal(`( SELECT b.status FROM courses_employee a JOIN quiz_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'status_quiz']
+            ],
+            include : {
+                model : Organization,
+                foreignKey : 'organization_code',
+                attributes : ['organization_code','organization_name']
+            },
+            where :{
+                id :{
+                    [Op.in] : Sequelize.literal(`(SELECT course_id FROM courses_employee WHERE employee_id='${employeeId}')`)
+                }
+            }
+        }
+    });
+}
+
+export const repoGetQuizEmpByEmployee = async(courseId, employeeId) => {
+    return await Quiz.findAll({
+        attributes : ['id','title',[Sequelize.literal(`'quiz'`),'learning_type']],
+        include : {
+            model : Courses,
+            foreignKey : 'course_id',
+            attributes : [
+                'course_name',
+                [Sequelize.literal(`(SELECT b.status FROM courses_employee a, quiz_employee b WHERE a.id=b.course_employee_id AND a.course_id=course.id AND a.employee_id='${employeeId} ')`),'status_quiz'],
+                [Sequelize.literal(`(SELECT id FROM courses_employee WHERE course_id=course.id AND employee_id='${employeeId}')`),'course_employee_id']
+            ],
+
+        },
+        where : {
+            course_id : courseId,
+            id : {
+                [Op.in] : Sequelize.literal(`(SELECT a.id FROM quiz a, courses_employee b WHERE b.course_id=a.course_id AND b.course_id=course.id AND b.employee_id='${employeeId}')`)
+            }
+        }
+    })
+}
+
+export const repoGetQuizEmpByQuiz = async(quizId, employeeId) => {
+    return await Quiz.findOne({
+        include : {
+            model : Courses,
+            foreignKey : 'course_id',
+            attributes : [
+                'course_name',
+                [Sequelize.literal(`(SELECT b.status FROM courses_employee a, quiz_employee b WHERE a.id=b.course_employee_id AND a.course_id=course.id AND a.employee_id='${employeeId} ')`),'status_quiz'],
+                [Sequelize.literal(`(SELECT b.score FROM courses_employee a, quiz_employee b WHERE a.id=b.course_employee_id AND a.course_id=course.id AND a.employee_id='${employeeId} ')`),'score'],
+            ],
+        },
+        where :{
+            id : {
+                [Op.in] : Sequelize.literal(`(SELECT a.id FROM quiz a, courses_employee b WHERE a.id='${quizId}' AND a.course_id=b.course_id AND b.course_id=course.id AND b.employee_id='${employeeId}')`)
+            }
         }
     });
 }

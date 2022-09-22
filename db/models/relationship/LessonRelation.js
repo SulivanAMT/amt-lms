@@ -1,8 +1,15 @@
 import db from '../../../config/database.js';
 import { Sequelize } from "sequelize";
 import Courses from '../Courses.js';
+import CoursesEmployee from '../CoursesEmployee.js';
 
 const LessonsDetail = db.define('lessons_detail', {
+    id : {
+        primaryKey : true,
+        allowNull : false,
+        type : Sequelize.INTEGER,
+        autoIncrement : true
+    },
     lesson_id : {
         type: Sequelize.INTEGER
     },
@@ -63,6 +70,10 @@ LessonsDetail.hasOne(LessonsEmployee, {
 
 LessonsEmployee.belongsTo(LessonsDetail, {
     foreignKey : 'lesson_detail_id'
+});
+
+LessonsEmployee.belongsTo(CoursesEmployee, {
+    foreignKey : 'course_employee_id'
 });
 
 export { Lessons, LessonsDetail, LessonsEmployee };

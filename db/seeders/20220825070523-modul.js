@@ -59,6 +59,15 @@ module.exports = {
       },
       {
         id : 6, 
+        modul_name : 'Contest',
+        modul_url : '',
+        modul_icon : 'fas fa-trophy',
+        is_parent : 'Y',
+        createdAt : new Date(),
+        updatedAt : new Date()
+      },
+      {
+        id : 7, 
         modul_name : 'Reporting',
         modul_url : '',
         modul_icon : 'fas fa-list',
@@ -67,7 +76,7 @@ module.exports = {
         updatedAt : new Date()
       },
       {
-        id : 7, 
+        id : 8, 
         modul_name : 'Settings',
         modul_url : '',
         modul_icon : 'fas fa-wrench',
@@ -76,7 +85,7 @@ module.exports = {
         updatedAt : new Date()
       },
       {
-        id : 8, 
+        id : 9, 
         modul_name : 'Logout',
         modul_url : '/home/logout',
         modul_icon : 'fas fa-sign-out-alt',

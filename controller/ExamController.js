@@ -1,5 +1,5 @@
 import { calculatePointQuestion, errMsg, getProgress, lower } from "../helper/Helper.js";
-import { repoCheckExamEmployee, repoCreateExam, repoCreateExamQuestion, repoDeleteExam, repoDeleteExamEmployeeAnswer, repoDeleteExamQuestion, repoEnrollExam, repoExamAnswerQuestion, repoGetExam, repoGetExamByCourse, repoGetExamById, repoGetExamEmployeeAnswer, repoGetExamEmployeeById, repoGetQuestionByExam, repoGetQuestionExam, repoGetQuestionExamById, repoSumPointByExamEmployee, repoUpdateExam, repoUpdateExamEmployee, repoUpdateExamQuestion } from "../repositories/ExamRepository.js";
+import { repoCheckExamEmployee, repoCreateExam, repoCreateExamQuestion, repoDeleteExam, repoDeleteExamEmployeeAnswer, repoDeleteExamQuestion, repoEnrollExam, repoExamAnswerQuestion, repoGetExam, repoGetExamByCourse, repoGetExamById, repoGetExamEmployeeAnswer, repoGetExamEmployeeById, repoGetMyExamEmpByExam, repoGetMyExams, repoGetQuestionByExam, repoGetQuestionExam, repoGetQuestionExamById, repoSumPointByExamEmployee, repoUpdateExam, repoUpdateExamEmployee, repoUpdateExamQuestion } from "../repositories/ExamRepository.js";
 import moment from 'moment';
 import { repoGetCourseEmpById, repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
 import { repoGetLessonByCourse, repoGetLessonEmpByCourseEmp } from "../repositories/LessonRepository.js";
@@ -250,10 +250,14 @@ export const enrollExam = async(req, res) => {
             score : 0,
             start_at : startAt,
             max_time : maxTime,
-            status : status
+            status : status,
+            passed_status : 'Not Passed'
         };
-        await repoEnrollExam(data);
+        const enroll = await repoEnrollExam(data);
         return res.json({
+            data : {
+                exam_employee_id : enroll.id
+            },
             message : 'Ujian telah dimulai dan batas submit pada '+maxTime,
             is_error : false
         });
@@ -365,6 +369,37 @@ export const examSubmitAnswer = async(req, res) => {
     }
 }
 
+
 export const importExamQuestions = async(req, res) => {
     
+}
+
+export const getMyExams = async(req, res) => {
+    try {
+        const examEmployee = await repoGetMyExams(req.body.employee_id);
+        return res.json({
+            data : examEmployee,
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        })
+    }
+}
+
+export const getMyExamEmpByExam = async(req, res) =>{
+    try {
+        const quiz = await repoGetMyExamEmpByExam(req.body.exam_id, req.body.employee_id);
+        return res.json({
+            data : quiz,
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        });
+    }
 }

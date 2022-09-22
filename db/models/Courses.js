@@ -8,7 +8,7 @@ const Courses = db.define('courses', {
         type : Sequelize.STRING
     },
     description : {
-        allowNull : false
+        type : Sequelize.STRING
     },
     organization_code : {
         type : Sequelize.STRING

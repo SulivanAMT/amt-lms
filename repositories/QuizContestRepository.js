@@ -143,7 +143,7 @@ export const repoGetQuestionByQuizContest = async(quizContestId) => {
 }
 
 export const repoEnrollQuiz = async(data) => {
-    await QuizContestEmployee.create(data);
+    return await QuizContestEmployee.create(data);
 }
 
 export const repoQuizContestAnswerQuestion = async(data) => {

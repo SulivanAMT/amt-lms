@@ -1,3 +1,4 @@
+import Sequelize, { Op, where } from "sequelize";
 import Courses from "../db/models/Courses.js";
 import CoursesEmployee from "../db/models/CoursesEmployee.js";
 import Organization from "../db/models/Organization.js";
@@ -125,4 +126,48 @@ export const repoUpdateCourseEmployee = async(data, id) => {
         },
         individualHooks : true
     });
+}
+
+export const repoGetCourseByEmployee = async(employeeId) => {
+    return await CoursesEmployee.findAll({
+        where : {
+            employee_id : employeeId
+        },
+        include : {
+            model : Courses,
+            foreignKey : 'course_id',
+            attributes : ['course_name','description','due_date'],
+            include : {
+                model : Organization,
+                foreignKey : 'organization_code',
+                attributes : ['organization_name']
+            }
+        }
+    })
+}
+
+export const repoGetMyCourses = async(employeeId) => {
+    return await CoursesEmployee.findAll({
+        attributes : ['id','employee_id','progress','status'],
+        include :{
+            model : Courses,
+            attributes : attributes,
+            foreignKey : 'course_id',
+            include : [
+                {
+                    model : Organization,
+                    foreignKey : 'organization_code',
+                    attributes : ['organization_code','organization_name']
+                },
+                {
+                    model : Users,
+                    foreignKey : 'created_by',
+                    attributes : ['name']
+                }
+            ]
+        },
+        where : {
+            employee_id : employeeId
+        }
+    })
 }

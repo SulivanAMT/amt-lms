@@ -276,7 +276,7 @@ module.exports = {
     {
       id : 30,
       roles : 'CMO',
-      flag_id : 8,
+      flag_id : 6,
       permission : 'Read',
       type : 'Modul',
       createdAt : new Date(),
@@ -285,16 +285,16 @@ module.exports = {
     {
       id : 31,
       roles : 'CMO',
-      flag_id : 11,
+      flag_id : 9,
       permission : 'Read',
-      type : 'Menu',
+      type : 'Modul',
       createdAt : new Date(),
       updatedAt : new Date()
     },
     {
       id : 32,
       roles : 'CMO',
-      flag_id : 13,
+      flag_id : 11,
       permission : 'Read',
       type : 'Menu',
       createdAt : new Date(),
@@ -303,7 +303,7 @@ module.exports = {
     {
       id : 33,
       roles : 'CMO',
-      flag_id : 14,
+      flag_id : 13,
       permission : 'Read',
       type : 'Menu',
       createdAt : new Date(),
@@ -312,7 +312,7 @@ module.exports = {
     {
       id : 34,
       roles : 'CMO',
-      flag_id : 16,
+      flag_id : 14,
       permission : 'Read',
       type : 'Menu',
       createdAt : new Date(),
@@ -321,7 +321,61 @@ module.exports = {
     {
       id : 35,
       roles : 'CMO',
+      flag_id : 16,
+      permission : 'Read',
+      type : 'Menu',
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 36,
+      roles : 'CMO',
       flag_id : 17,
+      permission : 'Read',
+      type : 'Menu',
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 37,
+      roles : 'ADM',
+      flag_id : 9,
+      permission : 'Create, Read, Update, Delete',
+      type : 'Modul',
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 38,
+      roles : 'ADM',
+      flag_id : 18,
+      permission : 'Create, Read, Update, Delete',
+      type : 'Menu',
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 39,
+      roles : 'ADM',
+      flag_id : 19,
+      permission : 'Create, Read, Update, Delete',
+      type : 'Menu',
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 40,
+      roles : 'ADM',
+      flag_id : 20,
+      permission : 'Create, Read, Update, Delete',
+      type : 'Menu',
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },
+    {
+      id : 41,
+      roles : 'CMO',
+      flag_id : 19,
       permission : 'Read',
       type : 'Menu',
       createdAt : new Date(),
