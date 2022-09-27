@@ -46,10 +46,16 @@ export const repoGetExam = async() => {
 
 export const repoGetExamById = async(id) => {
     return await Exams.findByPk(id,{
-        include : {
-            model : Courses,
-            foreignKey : 'course_id'
-        }
+        include : [
+            {
+                model : Courses,
+                foreignKey : 'course_id'
+            },
+            {
+                model : ExamsQuestions,
+                foreignKey : 'quiz_id'
+            }
+        ]
     });
 }
 
@@ -123,11 +129,6 @@ export const repoGetQuestionExam = async(exam, questionNumber) => {
                 model : ExamsMultipleChoice,
                 foreignKey : 'exam_question_id',
                 attributes : ['choice_type','choice_name']
-            },
-            {
-                model : Exams,
-                foreignKey : 'exam_id',
-                attributes : ['title','course_id','exam_time','number_of_question']
             }
         ]
     });
@@ -163,7 +164,7 @@ export const repoGetExamEmployeeById = async(id) => {
 }
 
 export const repoCheckExamEmployee = async(courseEmployeeId, examId) => {
-    return await ExamsEmployee.count({
+    return await ExamsEmployee.findOne({
         where : {
             course_employee_id : courseEmployeeId,
             exam_id : examId
@@ -177,10 +178,6 @@ export const repoEnrollExam = async(data) => {
 
 export const repoExamAnswerQuestion = async(data) => {
     await ExamsEmployeeAnswer.create(data);
-}
-
-export const repoUnEnrollExam = async(id) => {
-
 }
 
 export const repoGetExamEmployeeAnswer = async(examEmployeeId, examQuestionId) => {
@@ -232,6 +229,7 @@ export const repoGetMyExams = async(employeeId) => {
             model : Courses,
             foreignKey : 'course_id',
             attributes : [
+                'id',
                 'course_name',
                 [Sequelize.literal(`( SELECT b.status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'status_exams']
             ],
@@ -284,11 +282,14 @@ export const repoGetMyExamEmpByExam = async(examId, employeeId) => {
             model : Courses,
             foreignKey : 'course_id',
             attributes : [
+                'id',
                 'course_name',
                 [Sequelize.literal(`( SELECT b.status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'status_exams'],
                 [Sequelize.literal(`( SELECT b.score FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'score'],
                 [Sequelize.literal(`( SELECT b.passed_status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'passed_status'],
-                [Sequelize.literal(`( SELECT b.status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'status_exams']
+                [Sequelize.literal(`( SELECT b.status FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'status_exams'],
+                [Sequelize.literal(`( SELECT b.id FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'exam_employee_id'],
+                [Sequelize.literal(`( SELECT b.max_time FROM courses_employee a JOIN exams_employee b WHERE a.id=b.course_employee_id AND a.employee_id='${employeeId}' AND course_id=course.id)`),'max_time']
             ]
         },
         where :{
@@ -296,5 +297,126 @@ export const repoGetMyExamEmpByExam = async(examId, employeeId) => {
                 [Op.in] : Sequelize.literal(`(SELECT a.id FROM exams a, courses_employee b WHERE a.id='${examId}' AND a.course_id=b.course_id AND b.course_id=course.id AND b.employee_id='${employeeId}')`)
             }
         }
+    });
+}
+
+export const repoGetQuestionByExamEmp= async(examEmployeeId, questionNumber, result) => {
+    var attributes;
+    if(result == false) {
+        attributes = [
+            'id',
+            'name_of_question',
+            'question_number',
+            'question_type',
+            [Sequelize.literal('(SELECT answer_of_question FROM exams_employee_answer WHERE exam_question_id=`exam->exams_questions`.`id` AND exam_employee_id='+examEmployeeId+')'),'answer_of_question']
+        ]
+    }else{
+        attributes = [
+            'id',
+            'name_of_question',
+            'question_number',
+            'question_type',
+            ['answer_of_question','correct_answer'],
+            [Sequelize.literal('(SELECT answer_of_question FROM exams_employee_answer WHERE exam_question_id=`exam->exams_questions`.`id` AND exam_employee_id='+examEmployeeId+')'),'answer_of_question'],
+            [Sequelize.literal('(SELECT is_correct FROM exams_employee_answer WHERE exam_question_id=`exam->exams_questions`.`id` AND exam_employee_id='+examEmployeeId+')'),'is_correct']
+        ]
+    }
+    return await ExamsEmployee.findOne({
+        where : {
+            id : examEmployeeId
+        },
+        include : [
+            {
+                model : Exams,
+                foreignKey : 'exam_id',
+                include : {
+                    model : ExamsQuestions,
+                    foreignKey : 'exam_id',
+                    attributes : attributes,
+                    where : {
+                        question_number : questionNumber
+                    },
+                    include : {
+                        model : ExamsMultipleChoice,
+                        foreignKey : 'exam_question_id',
+                        attributes : ['choice_name','choice_type']
+                    }
+                }
+            },
+        ]
+    })
+}
+
+export const repoGetResultExam = async() => {
+    return await ExamsEmployee.findAll({
+        include : [
+            {
+                model : CoursesEmployee,
+                foreignKey : 'course_employee_id',
+                attributes : ['id', 'progress', 'status'],
+                include : {
+                    model : Courses,
+                    foreignKey : 'course_id',
+                    attributes : ['id','course_name','organization_code']
+                }  
+            },
+            {
+                model : Exams,
+                foreignKey : 'exam_id',
+                attributes : ['id','title','exam_time','number_of_question','passing_grade']
+            }
+        ]
+    });
+}
+
+export const repoGetResultExamByEmployee = async(employeeId) => {
+    return await ExamsEmployee.findAll({
+        include : [
+            {
+                model : CoursesEmployee,
+                foreignKey : 'course_employee_id',
+                attributes : ['id', 'progress', 'status'],
+                where : {
+                    employee_id : employeeId
+                },
+                include : {
+                    model : Courses,
+                    foreignKey : 'course_id',
+                    attributes : ['id','course_name','organization_code']
+                }  
+            },
+            {
+                model : Exams,
+                foreignKey : 'exam_id',
+                attributes : ['id','title','exam_time','number_of_question','passing_grade']
+            }
+         ]
+    });
+}
+
+export const repoGetResultExamByOrg = async(organizationCode) => {
+    return await ExamsEmployee.findAll({
+        include : [
+            {
+                model : CoursesEmployee,
+                foreignKey : 'course_employee_id',
+                attributes : ['id', 'progress', 'status'],
+                where : {
+                    employee_id : {
+                        [Op.in] : Sequelize.literal(`(SELECT id FROM users WHERE organization_code='${organizationCode}')`)
+                    }
+                },
+                include : {
+                    model : Courses,
+                    foreignKey : 'course_id',
+                    attributes : ['id','course_name','organization_code']
+                }  
+            },
+            {
+                model : Exams,
+                foreignKey : 'exam_id',
+                attributes : ['id','title','exam_time','number_of_question','passing_grade']
+            }
+         ]
     });
 }

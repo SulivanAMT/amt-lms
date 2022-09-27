@@ -1,6 +1,7 @@
 import db from "../../config/database.js";
 import { Sequelize } from "sequelize";
 import Courses from "./Courses.js";
+import ExamsQuestions from "./ExamsQuestions.js";
 
 const Exams = db.define('exams', {
     title : {
@@ -28,6 +29,10 @@ const Exams = db.define('exams', {
 
 Exams.belongsTo(Courses, {
     foreignKey : 'course_id'
+});
+
+Exams.hasMany(ExamsQuestions, {
+    foreignKey : 'exam_id',
 });
 
 export default Exams;

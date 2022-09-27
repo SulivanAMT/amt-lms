@@ -27,8 +27,4 @@ QuizQuestions.hasMany(QuizMultipleChoice, {
     foreignKey : 'quiz_question_id'
 });
 
-QuizQuestions.belongsTo(Quiz, {
-    foreignKey : 'quiz_id'
-});
-
 export default QuizQuestions;

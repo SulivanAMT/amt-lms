@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize";
 import db from "../../config/database.js";
 import CoursesEmployee from "./CoursesEmployee.js";
 import Exams from "./Exams.js";
+import ExamsEmployeeAnswer from "./ExamsEmployeeAnswer.js";
 
 const ExamsEmployee = db.define('exams_employee', {
     course_employee_id : {
@@ -41,6 +42,10 @@ ExamsEmployee.belongsTo(CoursesEmployee, {
 
 ExamsEmployee.belongsTo(Exams, {
     foreignKey : 'exam_id'
+});
+
+ExamsEmployee.hasMany(ExamsEmployeeAnswer,{
+    foreignKey : 'exam_employee_id'
 });
 
 export default ExamsEmployee;

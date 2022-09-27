@@ -1,5 +1,7 @@
 import db from '../../config/database.js';
 import { Sequelize } from 'sequelize';
+import Users from './Users.js';
+import QuizContestQuestions from './QuizContestQuestions.js';
 
 const QuizContest = db.define('quiz_contest', {
     id : {
@@ -24,6 +26,14 @@ const QuizContest = db.define('quiz_contest', {
     },
 }, {
     freezeTableName : true
+});
+
+QuizContest.belongsTo(Users, {
+    foreignKey : 'created_by'
+});
+
+QuizContest.hasMany(QuizContestQuestions, {
+    foreignKey : 'quiz_contest_id'
 });
 
 export default QuizContest;

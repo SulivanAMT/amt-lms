@@ -23,9 +23,9 @@ const QuizContestQuestions = db.define('quiz_contest_questions', {
     freezeTableName : true
 });
 
-QuizContestQuestions.belongsTo(QuizContest, {
-    foreignKey : 'quiz_contest_id'
-});
+// QuizContestQuestions.belongsTo(QuizContest, {
+//     foreignKey : 'quiz_contest_id'
+// });
 
 QuizContestQuestions.hasMany(QuizContestMultipeChoice, {
     foreignKey : 'contest_question_id'

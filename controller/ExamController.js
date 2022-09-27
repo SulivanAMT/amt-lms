@@ -1,5 +1,5 @@
 import { calculatePointQuestion, errMsg, getProgress, lower } from "../helper/Helper.js";
-import { repoCheckExamEmployee, repoCreateExam, repoCreateExamQuestion, repoDeleteExam, repoDeleteExamEmployeeAnswer, repoDeleteExamQuestion, repoEnrollExam, repoExamAnswerQuestion, repoGetExam, repoGetExamByCourse, repoGetExamById, repoGetExamEmployeeAnswer, repoGetExamEmployeeById, repoGetMyExamEmpByExam, repoGetMyExams, repoGetQuestionByExam, repoGetQuestionExam, repoGetQuestionExamById, repoSumPointByExamEmployee, repoUpdateExam, repoUpdateExamEmployee, repoUpdateExamQuestion } from "../repositories/ExamRepository.js";
+import { repoCheckExamEmployee, repoCreateExam, repoCreateExamQuestion, repoDeleteExam, repoDeleteExamEmployeeAnswer, repoDeleteExamQuestion, repoEnrollExam, repoExamAnswerQuestion, repoGetExam, repoGetExamByCourse, repoGetExamById, repoGetExamEmployeeAnswer, repoGetExamEmployeeById, repoGetMyExamEmpByExam, repoGetMyExams, repoGetQuestionByExam, repoGetQuestionByExamEmp, repoGetQuestionExam, repoGetQuestionExamById, repoGetResultExam, repoGetResultExamByEmployee, repoGetResultExamByOrg, repoSumPointByExamEmployee, repoUpdateExam, repoUpdateExamEmployee, repoUpdateExamQuestion } from "../repositories/ExamRepository.js";
 import moment from 'moment';
 import { repoGetCourseEmpById, repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
 import { repoGetLessonByCourse, repoGetLessonEmpByCourseEmp } from "../repositories/LessonRepository.js";
@@ -206,7 +206,6 @@ export const enrollExam = async(req, res) => {
     try {
         const courseEmployeeId = req.body.data.course_employee_id;
         const examId = req.body.data.exam_id;
-        const pointTotal = 0;
         const startAt = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
         const status = 'In Progress';
         const exam = await repoGetExamById(examId);
@@ -233,15 +232,27 @@ export const enrollExam = async(req, res) => {
                 });
             }
         }
+        if(exam.exams_questions.length < exam.number_of_question){
+            return res.json({
+                message : 'Exam tidak dapat dienroll dikarenakan masih ada data yang tidak lengkap, silahkan hubungi administrator'
+            })
+        }
         let maxTime = moment(new Date());
         maxTime = maxTime.add(exam.exam_time, 'minutes');
         maxTime = maxTime.format('YYYY-MM-DD HH:mm:ss');
-        const checkExamsEmployee = await repoCheckExamEmployee(courseEmployeeId, examId);
-        if(checkExamsEmployee > 0){
-            return res.json({
-                message : 'Gagal, Ujian sudah pernah diambil',
-                is_error : true
-            });
+        const examsEmployee = await repoCheckExamEmployee(courseEmployeeId, examId);
+        if(examsEmployee){
+            if(examsEmployee.status == 'Done'){
+                return res.json({
+                    message : 'Gagal, Ujian sudah anda selesaikan',
+                    is_error : true
+                });            
+            }else {
+                return res.json({
+                    message : 'Gagal, Ujian sudah pernah diambil',
+                    is_error : true
+                });
+            }
         }
         const data = {
             course_employee_id : courseEmployeeId,
@@ -287,6 +298,12 @@ export const examAnswerQuestion = async(req, res) => {
                 message : 'Pertanyaan ujian tidak ditemukan',
                 is_error : true
             });
+        }
+        if(answerOfQuestion == null) {
+            return res.json({
+                message : 'Gagal save, jawaban kosong',
+                is_error : true
+            })
         }
         if(examEmployee.exam_id !== examQuestion.exam_id || examEmployee.status == 'Done'){
             return res.json({
@@ -401,5 +418,48 @@ export const getMyExamEmpByExam = async(req, res) =>{
             message : errMsg(err),
             is_error : true
         });
+    }
+}
+
+export const getQuestionByExamEmployee = async(req, res) => {
+    try {
+        var result = false;
+        if(typeof req.body.result != 'undefined'){
+            result = req.body.result;
+        }
+        const examQuestion = await repoGetQuestionByExamEmp(req.body.exam_employee_id, req.body.question_number, result);
+        return res.json({
+            data : examQuestion,
+            is_error : false
+        })
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        });
+    }
+}
+
+export const getResultExam = async(req, res) => {
+    try {
+        let result = [];
+        if(req.body.type == "all"){
+            result = await repoGetResultExam();
+        }
+        else if(req.body.type == "employee") {
+            result = await repoGetResultExamByEmployee(req.body.id);
+        }
+        else if(req.body.type == "organization") {
+            result = await repoGetResultExamByOrg(req.body.id);
+        }
+        return res.json({
+            data : result,
+            is_error : false
+        })
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        })
     }
 }

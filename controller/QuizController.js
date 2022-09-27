@@ -1,5 +1,5 @@
 import { calculatePointQuestion, errMsg, getProgress, lower } from "../helper/Helper.js";
-import { repoCheckQuizEmployee, repoCreateQuiz, repoCreateQuizQuestion, repoDeleteQuiz, repoDeleteQuizEmployeeAnswer, repoDeleteQuizQuestion, repoEnrollQuiz, repoGetMyQuiz, repoGetQuestionQuiz, repoGetQuestionQuizById, repoGetQuiz, repoGetQuizByCourse, repoGetQuizById, repoGetQuizEmpByQuiz, repoGetQuizEmployeeAnswer, repoGetQuizEmployeeById, repoQuizAnswerQuestion, repoSumPointByQuizEmp, repoUnEnrollQuiz, repoUpdateQuiz, repoUpdateQuizEmp, repoUpdateQuizQuestion } from "../repositories/QuizRepository.js";
+import { repoCheckQuizEmployee, repoCreateQuiz, repoCreateQuizQuestion, repoDeleteQuiz, repoDeleteQuizEmployeeAnswer, repoDeleteQuizQuestion, repoEnrollQuiz, repoGetMyQuiz, repoGetQuestionByQuizEmp, repoGetQuestionQuiz, repoGetQuestionQuizById, repoGetQuiz, repoGetQuizByCourse, repoGetQuizById, repoGetQuizEmpByQuiz, repoGetQuizEmployeeAnswer, repoGetQuizEmployeeById, repoGetResultQuiz, repoGetResultQuizByEmployee, repoGetResultQuizByOrg, repoQuizAnswerQuestion, repoSumPointByQuizEmp, repoUnEnrollQuiz, repoUpdateQuiz, repoUpdateQuizEmp, repoUpdateQuizQuestion } from "../repositories/QuizRepository.js";
 import moment from "moment";
 import { repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
 
@@ -212,6 +212,11 @@ export const enrollQuiz = async(req, res) => {
                 is_error : true
             });
         }
+        if(quiz.quiz_questions.length < quiz.number_of_question){
+            return res.json({
+                message : 'Quiz tidak dapat dienroll dikarenakan masih ada data yang tidak lengkap, silahkan hubungi administrator'
+            })
+        }
         let maxTime = moment(new Date());
         maxTime = maxTime.add(quiz.quiz_time, 'minutes');
         maxTime = maxTime.format('YYYY-MM-DD HH:mm:ss');
@@ -272,6 +277,12 @@ export const quizAnswerQuestion = async(req, res) => {
                 message : 'Pertanyaan quiz tidak ditemukan',
                 is_error : true
             });
+        }
+        if(answerOfQuestion == null){
+            return res.json({
+                message : 'Anda belum memilih jawaban',
+                is_error : true
+            })
         }
         if(quizEmployee.quiz_id !== quizQuestion.quiz_id || quizEmployee.status == 'Done'){
             return res.json({
@@ -378,5 +389,48 @@ export const getMyQuizEmpByQuiz = async(req, res) =>{
             message : errMsg(err),
             is_error : true
         });
+    }
+}
+
+export const getQuestionByQuizEmployee = async(req, res) => {
+    try {
+        var result = false;
+        if(typeof req.body.result != 'undefined'){
+            result = req.body.result;
+        }
+        const quizQuestion = await repoGetQuestionByQuizEmp(req.body.quiz_employee_id, req.body.question_number, result);
+        return res.json({
+            data : quizQuestion,
+            is_error : false
+        })
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        });
+    }
+}
+
+export const getResultQuiz = async(req, res) => {
+    try {
+        let result = [];
+        if(req.body.type == "all"){
+            result = await repoGetResultQuiz();
+        }
+        else if(req.body.type == "employee") {
+            result = await repoGetResultQuizByEmployee(req.body.id);
+        }
+        else if(req.body.type == "organization") {
+            result = await repoGetResultQuizByOrg(req.body.id);
+        }
+        return res.json({
+            data : result,
+            is_error : false
+        })
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        })
     }
 }

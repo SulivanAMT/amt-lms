@@ -1,5 +1,5 @@
 import { calculatePointQuestion, errMsg, lower } from "../helper/Helper.js"
-import { repoCheckQuizContestEmployee, repoCreateQuizContest, repoCreateQuizContestPrize, repoCreateQuizContestQuestion, repoCreateQuizContestWinner, repoDeleteQuizContest, repoDeleteQuizContestEmployeeAnswer, repoDeleteQuizContestPrize, repoDeleteQuizContestQuestion, repoDeleteQuizContestWinner, repoEnrollQuizContest, repoGetPrizeByQuizContest, repoGetQuestionQuizContest, repoGetQuestionQuizContestById, repoGetQuizContest, repoGetQuizContestById, repoGetQuizContestEmployeeAnswer, repoGetQuizContestEmployeeById, repoQuizContestAnswerQuestion, repoSumPointByQuizContestEmp, repoUpdateQuizContest, repoUpdateQuizContestEmp, repoUpdateQuizContestQuestion } from "../repositories/QuizContestRepository.js"
+import { repoCheckQuizContestEmployee, repoCreateQuizContest, repoCreateQuizContestPrize, repoCreateQuizContestQuestion, repoCreateQuizContestWinner, repoDeleteQuizContest, repoDeleteQuizContestEmployeeAnswer, repoDeleteQuizContestPrize, repoDeleteQuizContestQuestion, repoDeleteQuizContestWinner, repoEnrollQuizContest, repoGetPrizeByQuizContest, repoGetQuestionByQuizContestEmp, repoGetQuestionQuizContest, repoGetQuestionQuizContestById, repoGetQuizContest, repoGetQuizContestByEmp, repoGetQuizContestById, repoGetQuizContestEmployeeAnswer, repoGetQuizContestEmployeeById, repoGetResultQuizContest, repoGetResultQuizContestByEmployee, repoGetResultQuizContestByOrg, repoGetWinner, repoQuizContestAnswerQuestion, repoSumPointByQuizContestEmp, repoUpdateQuizContest, repoUpdateQuizContestEmp, repoUpdateQuizContestQuestion } from "../repositories/QuizContestRepository.js"
 import { repoGetQuestionQuizById, repoGetQuizEmployeeById } from "../repositories/QuizRepository.js";
 import moment from "moment";
 
@@ -363,6 +363,12 @@ export const quizContestAnswer = async(req, res) => {
                 is_error : true
             });
         }
+        if(answerOfQuestion == null) {
+            return res.json({
+                message : 'Gagal save, jawaban kosong',
+                is_error : true
+            })
+        }
         const quizContestEmployeeAnswer = await repoGetQuizContestEmployeeAnswer(contestEmployeeId, contestQuestionId);
         if(quizContestEmployeeAnswer){
             if(answerOfQuestion != quizContestEmployeeAnswer.answer_of_question){
@@ -475,4 +481,81 @@ export const setTheWinnerQuizContest = async(req, res) => {
             is_error : false
         });
     } 
+}
+
+export const getQuizContestByEmployee = async(req, res) => {
+    try {
+        const quizContestId = req.body.quiz_contest_id;
+        const employeeId= req.body.employee_id;
+        const quizContest = await repoGetQuizContestByEmp(quizContestId, employeeId);
+        return res.json({
+            data : quizContest,
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        });
+    }
+}
+
+export const getQuestionByQuizContestEmp = async(req, res) => {
+    try {
+        const quizContestQuestion = await repoGetQuestionByQuizContestEmp(req.body.quiz_contest_employee_id, req.body.question_number);
+        return res.json({
+            data : quizContestQuestion,
+            is_error : false
+        })
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        });
+    }
+}
+
+export const getResultQuizContest = async(req, res) => {
+    try {
+        let result = [];
+        if(req.body.type == "all"){
+            result = await repoGetResultQuizContest();
+        }
+        else if(req.body.type == "employee") {
+            result = await repoGetResultQuizContestByEmployee(req.body.id);
+        }
+        else if(req.body.type == "organization") {
+            result = await repoGetResultQuizContestByOrg(req.body.id);
+        }
+        return res.json({
+            data : result,
+            is_error : false
+        })
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        });
+    }
+}
+
+export const getWinner = async(req, res) => {
+    try {
+        let data = [];
+        const winner = await repoGetWinner();
+        for(var i = 0; i < winner.length; i++){
+            if(winner[i].quiz_contest_winner != null) {
+                data.push(winner[i].quiz_contest_winner);
+            }
+        }
+        return res.json({
+            data : data,
+            is_error : false
+        });
+    } catch(err) {
+        return res.json({
+            message : errMsg(err),
+            is_error : true
+        })
+    }
 }

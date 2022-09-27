@@ -8,19 +8,20 @@ import { validateCourse, validateDataCourse } from '../validator/Courses.js';
 import { addLesson, createLessonContent, deleteLesson, deleteLessonContent, getLesson, getLessonByCourse, getLessonById, getLessonContentById, getLessonContentByLesson, updateLesson, updateLessonContent, uploadImageLesson, deleteImageLesson, getImageContent, getFirstLesson } from '../controller/LessonController.js';
 import { validateDataLesson, validateLesson } from '../validator/Lessons.js';
 import { validateDataLessonDetail, validateLessonDetail } from '../validator/LessonDetail.js';
-import { createExam, createExamQuestion, deleteExam, deleteExamQuestion, getExam, getExamByCourse, getExamById, getMyExamEmpByExam, getMyExams, getQuestionByExam, updateExam, updateExamQuestion } from '../controller/ExamController.js';
+import { createExam, createExamQuestion, deleteExam, deleteExamQuestion, getExam, getExamByCourse, getExamById, getMyExamEmpByExam, getMyExams, getQuestionByExam, getQuestionByExamEmployee, getResultExam, updateExam, updateExamQuestion } from '../controller/ExamController.js';
 import { validateExam } from '../validator/Exam.js';
-import { createQuiz, createQuizQuestion, deleteQuiz, deleteQuizQuestion, getMyQuiz, getMyQuizEmpByQuiz, getQuestionByQuiz, getQuiz, getQuizByCourse, getQuizById, updateQuiz, updateQuizQuestion } from '../controller/QuizController.js';
+import { createQuiz, createQuizQuestion, deleteQuiz, deleteQuizQuestion, getMyQuiz, getMyQuizEmpByQuiz, getQuestionByQuiz, getQuestionByQuizEmployee, getQuiz, getQuizByCourse, getQuizById, getResultQuiz, updateQuiz, updateQuizQuestion } from '../controller/QuizController.js';
 import { validateQuiz } from '../validator/Quiz.js';
 import { RoutingLearning } from '../middleware/RoutingLearning.js';
 import { validateDataOrganization, validateOrganization } from '../validator/Organization.js';
 import { validatePosition } from '../validator/Position.js';
-import multer from 'multer';
 import validateExamQuestion from '../validator/ExamQuestion.js';
 import validateQuizQuestion from '../validator/QuizQuestion.js';
-import { createQuizContest, createQuizContestQuestion, deleteQuizContest, deleteQuizContestQuestion, getPrizeByQuizContest, getQuestionByQuizContest, getQuizContest, getQuizContestById, setTheWinnerQuizContest, updateQuizContest, updateQuizContestQuestion } from '../controller/QuizContestController.js';
+import { createQuizContest, createQuizContestQuestion, deleteQuizContest, deleteQuizContestQuestion, getPrizeByQuizContest, getQuestionByQuizContest, getQuestionByQuizContestEmp, getQuizContest, getQuizContestByEmployee, getQuizContestById, setTheWinnerQuizContest, updateQuizContest, updateQuizContestQuestion, getResultQuizContest, getWinner } from '../controller/QuizContestController.js';
 import validateQuizContest from '../validator/QuizContest.js';
 import validateQuizContestQuestion from '../validator/QuizContestQuestion.js';
+import { createKPI, deleteKPI, getKPI, getKPIById, updateKPI } from '../controller/KeyPerformanceController.js';
+import { validateKeyPerformance } from '../validator/KeyPerformance.js';
 
 const router = express.Router();
 
@@ -94,6 +95,7 @@ router.put('/exam/:id', verifyToken, validateExam, updateExam);
 router.post('/exam', verifyToken, validateExam, createExam);
 router.delete('/exam/:id', verifyToken, deleteExam);
 router.post('/exam/course', verifyToken, getExamByCourse);
+router.post('/exam/result', verifyToken, getResultExam);
 
 //Exams Question
 router.post('/exam_question', verifyToken, validateExamQuestion, createExamQuestion);
@@ -102,6 +104,7 @@ router.delete('/exam_question/:id', verifyToken, deleteExamQuestion);
 router.post('/exam_question/exam', verifyToken, getQuestionByExam);
 router.post('/exam/my_exam', verifyToken, getMyExams);
 router.post('/exam/my_exam_employee', verifyToken, getMyExamEmpByExam);
+router.post('/exam_question/exam_employee', verifyToken, getQuestionByExamEmployee);
 
 
 //Quiz
@@ -111,6 +114,7 @@ router.put('/quiz/:id', verifyToken, validateQuiz, updateQuiz);
 router.post('/quiz', verifyToken, validateQuiz, createQuiz);
 router.delete('/quiz/:id', verifyToken, deleteQuiz);
 router.post('/quiz/course', verifyToken, getQuizByCourse);
+router.post('/quiz/result', verifyToken, getResultQuiz);
 
 //Quiz Question
 router.put('/quiz_question/:id', verifyToken, validateQuizQuestion, updateQuizQuestion);
@@ -119,6 +123,7 @@ router.delete('/quiz_question/:id', verifyToken, deleteQuizQuestion);
 router.post('/quiz_question/quiz', verifyToken, getQuestionByQuiz);
 router.post('/quiz/my_quiz', verifyToken, getMyQuiz);
 router.post('/quiz/my_quiz_employee', verifyToken, getMyQuizEmpByQuiz);
+router.post('/quiz_question/quiz_employee', verifyToken, getQuestionByQuizEmployee)
 
 //Quiz Contest
 router.get('/quiz_contest', verifyToken, getQuizContest);
@@ -126,12 +131,16 @@ router.post('/quiz_contest', verifyToken, validateQuizContest, createQuizContest
 router.get('/quiz_contest/:id', verifyToken, getQuizContestById);
 router.put('/quiz_contest/:id', verifyToken, validateQuizContest, updateQuizContest);
 router.delete('/quiz_contest/:id', verifyToken, deleteQuizContest);
+router.post('/quiz_contest/my_contest_employee' ,verifyToken, getQuizContestByEmployee);
+router.post('/quiz_contest/winner', verifyToken, getWinner);
 
 //Quiz Contest Question
 router.post('/quiz_contest/question', verifyToken, validateQuizContestQuestion, createQuizContestQuestion);
 router.put('/quiz_contest/question/:id', verifyToken, validateQuizContestQuestion, updateQuizContestQuestion);
 router.post('/quiz_contest/question/quiz', verifyToken, getQuestionByQuizContest);
 router.delete('/quiz_contest/question/:id', verifyToken, deleteQuizContestQuestion);
+router.post('/quiz_contest/question/employee', verifyToken, getQuestionByQuizContestEmp);
+router.post('/quiz_contest/result',verifyToken, getResultQuizContest)
 router.get('/quiz_contest/prize/:id', verifyToken, getPrizeByQuizContest);
 router.post('/quiz_contest/winner', verifyToken, setTheWinnerQuizContest);
 
@@ -141,6 +150,11 @@ router.post('/learning', verifyToken, RoutingLearning)
 /* Monitoring & Reporting */
 
 /* Settings */
+router.get('/key_performance', verifyToken, getKPI);
+router.get('/key_performance/:id', verifyToken, getKPIById);
+router.post('/key_performance', verifyToken, validateKeyPerformance, createKPI);
+router.put('/key_performance/:id', verifyToken, validateKeyPerformance, updateKPI);
+router.delete('/key_performance/:id', verifyToken, deleteKPI);
 
 
 export default router;

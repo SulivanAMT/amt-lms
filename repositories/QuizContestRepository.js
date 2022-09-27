@@ -1,4 +1,5 @@
-import sequelize from "sequelize";
+import sequelize, { Sequelize } from "sequelize";
+import { Op } from "sequelize";
 import Organization from "../db/models/Organization.js";
 import QuizContest from "../db/models/QuizContest.js";
 import QuizContestEmployee from "../db/models/QuizContestEmployee.js";
@@ -10,7 +11,13 @@ import QuizContestWinner from "../db/models/QuizContestWinner.js";
 import Users from "../db/models/Users.js";
 
 export const repoGetQuizContest = async() => {
-    return await QuizContest.findAll();
+    return await QuizContest.findAll({
+        include : {
+            model : Users,
+            foreignKey : 'created_by',
+            attributes : ['name']
+        }
+    });
 }
 
 export const repoGetQuizContestById = async(id) => {
@@ -116,11 +123,11 @@ export const repoGetQuestionQuizContest = async(quizContestId, questionNumber) =
                 foreignKey : 'contest_question_id',
                 attributes : ['choice_type','choice_name']
             },
-            {
-                model : QuizContest,
-                foreignKey : 'quiz_contest_id',
-                attributes : ['title','quiz_time','number_of_question']
-            }
+            // {
+            //     model : QuizContest,
+            //     foreignKey : 'quiz_contest_id',
+            //     attributes : ['title','quiz_time','number_of_question']
+            // }
         ]
     });
     return quizContestQuestion;
@@ -147,7 +154,7 @@ export const repoEnrollQuiz = async(data) => {
 }
 
 export const repoQuizContestAnswerQuestion = async(data) => {
-    await QuizContestEmployeeAnswer.bulkCreate(data);
+    await QuizContestEmployeeAnswer.create(data);
 }
 
 export const repoCheckQuizContestEmployee = async(employeeId, quizContestId) => {
@@ -244,4 +251,127 @@ export const repoDeleteQuizContestWinner = async(prizeId) => {
             prize_id : prizeId
         }
     });
+}
+
+export const repoGetQuizContestByEmp = async(quizContestId, employeeId) => {
+    return await QuizContestEmployee.findOne({
+        where : {
+            quiz_contest_id : quizContestId,
+            employee_id : employeeId
+        }, 
+        include : {
+            model : QuizContest,
+            foreignKey : 'quiz_contest_id',
+            attributes : ['title','quiz_time','number_of_question']
+        }
+    })
+}
+
+export const repoGetQuestionByQuizContestEmp = async(quizContestEmployeeId, questionNumber) => {
+    return await QuizContestEmployee.findOne({
+        include : [
+            {
+                model : QuizContest,
+                foreignKey : 'quiz_contest_id',
+                include : {
+                    model : QuizContestQuestions,
+                    foreignKey : 'quiz_contest_id',
+                    attributes : [
+                        'id',
+                        'name_of_question',
+                        'question_number',
+                        'question_type',
+                        [Sequelize.literal('(SELECT answer_of_question FROM quiz_contest_employee_answer WHERE contest_question_id=`quiz_contest->quiz_contest_questions`.`id` AND contest_employee_id='+quizContestEmployeeId+')'),'answer_of_question']
+                    ],
+                    where : {
+                        question_number : questionNumber
+                    },
+                    include : {
+                        model : QuizContestMultipeChoice,
+                        foreignKey : 'contest_question_id',
+                        attributes : ['choice_name','choice_type'],
+                    }
+                }
+            }
+        ]
+    }) 
+}
+
+export const repoGetResultQuizContest = async() => {
+    return await QuizContestEmployee.findAll({
+        include : [
+            {
+                model : QuizContest,
+                foreignKey : 'quiz_contest_id',
+                attributes : ['id','title','quiz_time','number_of_question']
+            }
+        ]
+    });
+}
+
+export const repoGetResultQuizContestByEmployee = async(employeeId) => {
+    return await QuizContestEmployee.findAll({
+        include : [
+            {
+                model : QuizContest,
+                foreignKey : 'quiz_contest_id',
+                attributes : ['id','title','quiz_time','number_of_question']
+            }
+         ],
+        where : {
+            employee_id : employeeId
+        }
+    });
+}
+
+export const repoGetResultQuizContestByOrg = async(organizationCode) => {
+    return await QuizContestEmployee.findAll({
+        include : [
+            {
+                model : QuizContest,
+                foreignKey : 'quiz_contest_id',
+                attributes : ['id','title','quiz_time','number_of_question']
+            }
+        ],
+        where : {
+            employee_id : {
+                [Op.in] : Sequelize.literal(`(SELECT id FROM users WHERE organization_code='${organizationCode}')`)
+            }
+        },
+    });
+}
+
+export const repoGetWinner = async() => {
+    return await QuizContestPrize.findAll({
+        attributes : ['winner_type','prize_description'],
+        include : [
+            {
+                model : QuizContestWinner,
+                foreignKey : 'prize_id',
+                attributes : [
+                        'id',
+                        [Sequelize.literal('`quiz_contest_prize`.`winner_type`'),'winner_type'],
+                        [Sequelize.literal('`quiz_contest_prize`.`prize_description`'),'prize_description'],
+                        [Sequelize.literal('`quiz_contest`.`title`'),'title_quiz'],
+                        [Sequelize.literal('`quiz_contest`.`description`'),'description_quiz'],
+                        [Sequelize.literal('`quiz_contest`.`createdAt`'),'quiz_date'],
+                ],
+                include : {
+                    model : Users,
+                    foreignKey : 'employee_id',
+                    attributes : ['name','email'],
+                    include : {
+                        model : Organization,
+                        foreignKey : 'organization_code',
+                        attributes : ['organization_code','organization_name']
+                    }
+                } 
+            },
+            {
+                model : QuizContest,
+                foreignKey: 'quiz_contest_id',
+                attributes : ['title','description','createdAt']
+            }
+        ]
+    })
 }

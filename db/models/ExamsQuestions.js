@@ -33,8 +33,4 @@ ExamsQuestions.hasMany(ExamsMultipleChoice, {
     foreignKey : 'exam_question_id'
 });
 
-ExamsQuestions.belongsTo(Exams, {
-    foreignKey : 'exam_id'
-});
-
 export default ExamsQuestions;
