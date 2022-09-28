@@ -241,7 +241,8 @@ export const enrollQuiz = async(req, res) => {
             score : 0,
             start_at : startAt,
             max_time : maxTime,
-            status : status
+            status : status,
+            progress : 0
         };
         const enroll = await repoEnrollQuiz(data);
         return res.json({
@@ -340,13 +341,14 @@ export const quizSubmitAnswer = async(req, res) => {
                 is_error : true
             });
         }
+        const progress = await getProgress(quizEmployee.courses_employee.course_id);
         await repoUpdateQuizEmp({
             end_at : moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
             status : 'Done',
             point : 200,
-            score : totalPoint.total
+            score : totalPoint.total,
+            progress : progress
         }, quizEmployeeId);
-        const progress = await getProgress(quizEmployee.courses_employee.course_id);
         await repoUpdateCourseEmployee({
             progress : quizEmployee.courses_employee.progress + progress
         }, quizEmployee.courses_employee.id);

@@ -262,7 +262,8 @@ export const enrollExam = async(req, res) => {
             start_at : startAt,
             max_time : maxTime,
             status : status,
-            passed_status : 'Not Passed'
+            passed_status : 'Not Passed',
+            progress : 0
         };
         const enroll = await repoEnrollExam(data);
         return res.json({
@@ -363,14 +364,15 @@ export const examSubmitAnswer = async(req, res) => {
                 is_error : true
             });
         }
+        const progress = await getProgress(examEmployee.courses_employee.course_id);
         await repoUpdateExamEmployee({
             end_at : moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
             status : 'Done',
             passed_status : passedStatus,
             point : 200,
-            score : totalPoint.total
+            score : totalPoint.total,
+            progress : progress
         }, examEmployeeId);
-        const progress = await getProgress(examEmployee.courses_employee.course_id);
         await repoUpdateCourseEmployee({
             progress : examEmployee.courses_employee.progress + progress
         }, examEmployee.courses_employee.id);

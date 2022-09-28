@@ -20,7 +20,7 @@ import validateQuizQuestion from '../validator/QuizQuestion.js';
 import { createQuizContest, createQuizContestQuestion, deleteQuizContest, deleteQuizContestQuestion, getPrizeByQuizContest, getQuestionByQuizContest, getQuestionByQuizContestEmp, getQuizContest, getQuizContestByEmployee, getQuizContestById, setTheWinnerQuizContest, updateQuizContest, updateQuizContestQuestion, getResultQuizContest, getWinner } from '../controller/QuizContestController.js';
 import validateQuizContest from '../validator/QuizContest.js';
 import validateQuizContestQuestion from '../validator/QuizContestQuestion.js';
-import { createKPI, deleteKPI, getKPI, getKPIById, updateKPI } from '../controller/KeyPerformanceController.js';
+import { createKPI, deleteKPI, getKPI, getKPIById, getReportCourse, getReportKPI, reportDashboard, updateKPI } from '../controller/KeyPerformanceController.js';
 import { validateKeyPerformance } from '../validator/KeyPerformance.js';
 
 const router = express.Router();
@@ -148,6 +148,10 @@ router.post('/quiz_contest/winner', verifyToken, setTheWinnerQuizContest);
 router.post('/learning', verifyToken, RoutingLearning)
 
 /* Monitoring & Reporting */
+router.post('/report/dashboard', verifyToken, reportDashboard);
+router.post('/report/kpi', verifyToken, getReportKPI);
+router.post('/report/course', verifyToken, getReportCourse);
+
 
 /* Settings */
 router.get('/key_performance', verifyToken, getKPI);

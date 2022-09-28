@@ -31,7 +31,10 @@ const ExamsEmployee = db.define('exams_employee', {
     },
     passed_status : {
         type : Sequelize.ENUM('Passed', 'Not Passed')
-    }
+    },
+    progress : {
+        type : Sequelize.FLOAT
+    },
 }, {
     freezeTableName : true
 });

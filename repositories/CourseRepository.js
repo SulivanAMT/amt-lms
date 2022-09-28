@@ -171,3 +171,25 @@ export const repoGetMyCourses = async(employeeId) => {
         }
     })
 }
+
+export const repoGetCoursesEmployee = async(organization = '', employeeId ='') => {
+    return await CoursesEmployee.findAll({
+        include : [
+            {
+                model : Courses,
+                foreignKey : 'course_id',
+                attributes : ['course_name','due_date'],
+                include : {
+                    model : Organization,
+                    foreignKey : 'organization_code',
+                    attributes : ['organization_name']
+                }
+            },
+            {
+                model : Users,
+                foreignKey : 'employee_id',
+                attributes : ['name','email']
+            }
+        ]
+    })
+}

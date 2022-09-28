@@ -27,7 +27,10 @@ const QuizEmployee = db.define('quiz_employee', {
     },
     status : {
         type : Sequelize.ENUM('Done', 'In Progress')
-    }
+    },
+    progress : {
+        type : Sequelize.FLOAT
+    },
 }, {
     freezeTableName : true
 });

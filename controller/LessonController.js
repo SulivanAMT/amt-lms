@@ -220,6 +220,7 @@ export const completedLessonContent = async(req, res) => {
             course_employee_id : courseEmployeeId,
             lesson_detail_id : lessonDetailId,
             status : status,
+            progress : await getProgress(courseEmployee.course_id),
             point : 100
         };
         const checkCompletedLesson = await repoGetLessonsEmpByIdAndLesson(courseEmployeeId, lessonDetailId);

@@ -31,6 +31,10 @@ module.exports = {
         allowNull : false,
         type : Sequelize.FLOAT
       },
+      progress : {
+        allowNull : false,
+        type : Sequelize.FLOAT
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

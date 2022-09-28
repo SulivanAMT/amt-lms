@@ -47,7 +47,10 @@ const LessonsEmployee = db.define('lessons_employee', {
     },
     point : {
         type : Sequelize.FLOAT
-    }
+    },
+    progress : {
+        type : Sequelize.FLOAT
+    },
 }, {
     freezeTableName : true
 });

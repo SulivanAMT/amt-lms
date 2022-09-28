@@ -49,6 +49,10 @@ module.exports = {
         allowNull : false,
         type : Sequelize.ENUM('Passed','Not Passed')
       },
+      progress : {
+        allowNull : false,
+        type : Sequelize.FLOAT
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
