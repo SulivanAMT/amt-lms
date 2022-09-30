@@ -1,7 +1,6 @@
 import { repoGetExamByCourse, repoGetQuestionByExam, repoGetQuestionExamById } from "../repositories/ExamRepository.js";
 import { repoGetLessonByCourse } from "../repositories/LessonRepository.js";
 import { repoGetQuestionByQuiz, repoGetQuestionQuizById, repoGetQuizByCourse } from "../repositories/QuizRepository.js";
-import multer from "multer";
 import { repoGetQuestionByQuizContest, repoGetQuestionQuizContestById } from "../repositories/QuizContestRepository.js";
 
 export const errMsg = (msg) => {
@@ -62,4 +61,15 @@ export const calculatePointQuestion = async(questionId, questionType, type) => {
         calcPoint = passPoint / passQuestion;
     }
     return calcPoint;
+}
+
+export const randomString = (length) =>{
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
 }

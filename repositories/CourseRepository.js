@@ -1,4 +1,5 @@
 import Sequelize, { Op, where } from "sequelize";
+import Certificate from "../db/models/Certificate.js";
 import Courses from "../db/models/Courses.js";
 import CoursesEmployee from "../db/models/CoursesEmployee.js";
 import Organization from "../db/models/Organization.js";
@@ -149,7 +150,8 @@ export const repoGetCourseByEmployee = async(employeeId) => {
 export const repoGetMyCourses = async(employeeId) => {
     return await CoursesEmployee.findAll({
         attributes : ['id','employee_id','progress','status'],
-        include :{
+        include : [
+        {
             model : Courses,
             attributes : attributes,
             foreignKey : 'course_id',
@@ -159,13 +161,19 @@ export const repoGetMyCourses = async(employeeId) => {
                     foreignKey : 'organization_code',
                     attributes : ['organization_code','organization_name']
                 },
-                {
-                    model : Users,
-                    foreignKey : 'created_by',
-                    attributes : ['name']
-                }
-            ]
-        },
+                    {
+                        model : Users,
+                        foreignKey : 'created_by',
+                        attributes : ['name']
+                    }
+                ]
+            }, 
+            {
+                model : Certificate,
+                foreignKey : 'course_employee_id',
+                attributes : ['code']
+            }
+        ],
         where : {
             employee_id : employeeId
         }
@@ -173,6 +181,18 @@ export const repoGetMyCourses = async(employeeId) => {
 }
 
 export const repoGetCoursesEmployee = async(organization = '', employeeId ='') => {
+    var whereOrg = {};
+    var whereEmp = {};
+    if(organization != ''){
+        whereOrg = {
+            organization_code : organization
+        }
+    } 
+    if(employeeId != ''){
+        whereEmp = {
+            id : employeeId
+        }
+    }
     return await CoursesEmployee.findAll({
         include : [
             {
@@ -182,14 +202,28 @@ export const repoGetCoursesEmployee = async(organization = '', employeeId ='') =
                 include : {
                     model : Organization,
                     foreignKey : 'organization_code',
-                    attributes : ['organization_name']
-                }
+                    attributes : ['organization_name'],
+                },
+                where : whereOrg 
             },
             {
                 model : Users,
                 foreignKey : 'employee_id',
-                attributes : ['name','email']
+                attributes : ['name','email'],
+                where : whereEmp
             }
         ]
     })
+}
+
+export const repoCreateCertificate = async(data) => {
+    await Certificate.create(data);
+}
+
+export const repoGetCertificateByCourseEmp = async(courseEmployeeId) => {
+    return await Certificate.findOne({
+        where : {
+            course_employee_id : courseEmployeeId
+        }
+    });
 }

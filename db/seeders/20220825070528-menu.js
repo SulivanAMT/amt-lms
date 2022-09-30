@@ -41,8 +41,8 @@ module.exports = {
     },
     {
       id : 4,
-      menu_name : 'Score',
-      menu_url : '/home/reporting/score',
+      menu_name : 'Course Progress',
+      menu_url : '/home/reporting/course',
       menu_icon : '',
       modul_id : 7,
       createdAt : new Date(),

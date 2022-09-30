@@ -233,3 +233,12 @@ export const repoGetPermission = async(role, type, url) => {
         attributes : ['permission']
     });
 }
+
+export const repoGetHeadOfDept = async(org) => {
+    return await Users.findOne({
+        where : {
+            organization_code : org,
+            roles : 'SPV'
+        }
+    });
+}

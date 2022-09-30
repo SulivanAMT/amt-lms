@@ -130,7 +130,7 @@ export const reportDashboard = async(req, res) => {
                     average_course : kpiCourse[0].average_course,
                     target_average_course : kpiCourse[0].target_progress_course,
                     average_exam : kpiExam[0].average_exam,
-                    target_average_exam : kpiCourse[0].target_average_exam
+                    target_average_exam : kpiExam[0].target_average_exam
                 },
                 is_error : false
             });
@@ -264,7 +264,15 @@ export const getReportKPI = async(req, res) => {
 
 export const getReportCourse = async(req, res) => {
     try {
-        const reportCourse = await repoGetCoursesEmployee();
+        var organization = '';
+        var employeeId = '';
+        if(typeof req.body.organization_code != 'undefined'){
+            organization = req.body.organization_code;
+        }
+        if(typeof req.body.employee_id != 'undefined'){
+            employeeId = req.body.employee_id;
+        }
+        const reportCourse = await repoGetCoursesEmployee(organization, employeeId);
         return res.json({
             data : reportCourse,
             is_error : false

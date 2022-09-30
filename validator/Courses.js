@@ -2,6 +2,8 @@ import { check, validationResult } from "express-validator";
 import Courses from "../db/models/Courses.js";
 import Organization from "../db/models/Organization.js";
 import Users from "../db/models/Users.js";
+import PDFDocument from "pdfkit";
+import fs from "fs";
 
 export const validateCourse = [
     check('course_name')
@@ -91,4 +93,3 @@ export const validateDataCourse = async(req, res, next) => {
     }
     next();
 }
-

@@ -3,7 +3,7 @@ import express from 'express';
 import { verifyToken } from '../middleware/VerifyToken.js';
 import { validateDataUser, validateUser } from '../validator/Users.js';
 import { getUser, getUserById, updateUser, deleteUser, addUser, getListOfMenu, getOrganization, createOrganization, updateOrganization, deleteOrganization, getOrganizationByCode, getRoles, getPosition, updatePosition, deletePosition, createPosition, getPositionByCode, getUserByOrg, getPermissionByMenu } from '../controller/UserController.js';
-import { addCourse, updateCourse, deleteCourse, getCourse, getCourseByOrg, getCourseById, getMyCourses } from '../controller/CourseController.js';
+import { addCourse, updateCourse, deleteCourse, getCourse, getCourseByOrg, getCourseById, getMyCourses, getCertificate, downloadCertificate } from '../controller/CourseController.js';
 import { validateCourse, validateDataCourse } from '../validator/Courses.js';
 import { addLesson, createLessonContent, deleteLesson, deleteLessonContent, getLesson, getLessonByCourse, getLessonById, getLessonContentById, getLessonContentByLesson, updateLesson, updateLessonContent, uploadImageLesson, deleteImageLesson, getImageContent, getFirstLesson } from '../controller/LessonController.js';
 import { validateDataLesson, validateLesson } from '../validator/Lessons.js';
@@ -22,6 +22,8 @@ import validateQuizContest from '../validator/QuizContest.js';
 import validateQuizContestQuestion from '../validator/QuizContestQuestion.js';
 import { createKPI, deleteKPI, getKPI, getKPIById, getReportCourse, getReportKPI, reportDashboard, updateKPI } from '../controller/KeyPerformanceController.js';
 import { validateKeyPerformance } from '../validator/KeyPerformance.js';
+import { createPermission, deletePermission, getMenu, getModul, getPermission, getPermissionById, updatePermission } from '../controller/RolesController.js';
+import { validatePermission } from '../validator/Roles.js';
 
 const router = express.Router();
 
@@ -154,11 +156,25 @@ router.post('/report/course', verifyToken, getReportCourse);
 
 
 /* Settings */
+
+//KPI
 router.get('/key_performance', verifyToken, getKPI);
 router.get('/key_performance/:id', verifyToken, getKPIById);
 router.post('/key_performance', verifyToken, validateKeyPerformance, createKPI);
 router.put('/key_performance/:id', verifyToken, validateKeyPerformance, updateKPI);
 router.delete('/key_performance/:id', verifyToken, deleteKPI);
 
+//Roles & Permission
+router.get('/permission', verifyToken, getPermission);
+router.get('/permission/:id', verifyToken, getPermissionById);
+router.post('/permission', verifyToken, validatePermission, createPermission);
+router.put('/permission/:id', verifyToken, updatePermission);
+router.delete('/permission/:id', verifyToken, deletePermission);
+router.post('/permission/modul', verifyToken, getModul);
+router.post('/permission/menu',verifyToken, getMenu);
+
+/* Certificate */
+// router.post('/certificate', verifyToken, getCertificate);
+router.get('/certificate/:code', verifyToken, downloadCertificate);
 
 export default router;

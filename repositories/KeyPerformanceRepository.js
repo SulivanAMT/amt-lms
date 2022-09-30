@@ -61,19 +61,24 @@ export const repoGetKPIYearByOrg = async(periodYear, organizationCode) => {
 }
 
 export const repoReportAvgCourseCurrent = async(employeeId = '', organization = '') => {
-    var param ='';
+    var paramEmp = '';
+    var paramOrg = '';
     if(employeeId != ''){
-        param = `AND A.id='${employeeId}'`;
+        paramEmp = `AND A.id='${employeeId}'`;
     }
     if(organization != ''){
-        param = `AND A.organization_code='${organization}'`;
+        paramOrg = `AND A.organization_code='${organization}'`;
     }
-    return await db.query(`SELECT A.*,B.target_progress_course, CASE WHEN A.average_course >= B.target_progress_course THEN 'Achived' ELSE 'Not Achived' END AS status_kpi FROM report_avg_course A, kpi_master B 
-        WHERE A.organization_code=B.organization_code
+    return await db.query(`SELECT A.*,B.target_progress_course, CASE WHEN A.average_course >= B.target_progress_course THEN 'Achived' ELSE 'Not Achived' END AS status_kpi FROM report_avg_course A, kpi_master B,
+        users C 
+        WHERE A.id=C.id
+        AND A.organization_code=B.organization_code
         AND A.tahun=B.period_year
         AND A.tahun=DATE_FORMAT(now(),'%Y') 
         AND A.periode=DATE_FORMAT(now(),'%M')
-        ${param} 
+        ${paramEmp}
+        ${paramOrg} 
+        AND C.roles IN ('CMO','SPV')
         ORDER BY A.id ASC`,{
         type : QueryTypes.SELECT
     });
@@ -201,19 +206,24 @@ export const repoReportAvgCoursePerMonth = async(employeeId = '', organization =
 }
 
 export const repoReportAvgExamCurrent = async(employeeId = '', organization = '') => {
-    var param = '';
+    var paramEmp = '';
+    var paramOrg = '';
     if(employeeId != ''){
-        param = `AND A.id='${employeeId}'`;
+        paramEmp = `AND A.id='${employeeId}'`;
     }
     if(organization != ''){
-        param = `AND A.organization_code='${organization}'`;
+        paramOrg = `AND A.organization_code='${organization}'`;
     }
-    return await db.query(`SELECT A.*,B.target_average_exam, CASE WHEN A.average_exam >= B.target_average_exam THEN 'Achived' ELSE 'Not Achived' END AS status_kpi FROM report_avg_exam A, kpi_master B 
-        WHERE A.organization_code=B.organization_code
+    return await db.query(`SELECT A.*,B.target_average_exam, CASE WHEN A.average_exam >= B.target_average_exam THEN 'Achived' ELSE 'Not Achived' END AS status_kpi FROM report_avg_exam A, kpi_master B,
+        users C
+        WHERE A.id=C.id
+        AND A.organization_code=B.organization_code
         AND A.tahun=B.period_year
         AND A.tahun=DATE_FORMAT(now(),'%Y') 
         AND A.periode=DATE_FORMAT(now(),'%M')
-        ${param} 
+        AND C.roles IN ('CMO','SPV')
+        ${paramEmp}
+        ${paramOrg} 
         ORDER BY A.id ASC`,{
         type : QueryTypes.SELECT
     });
@@ -354,7 +364,7 @@ export const repoGroupCourseOrganization = async(organization = '') => {
         WHERE
             a.organization_code = b.organization_code
         ${param}
-        ORDER BY a.organization_code`, {
+        GROUP BY a.organization_code`, {
             type : QueryTypes.SELECT
         });
 }

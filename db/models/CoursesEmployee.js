@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import db from "../../config/database.js";
+import Certificate from "./Certificate.js";
 import Courses from "./Courses.js";
 import Users from "./Users.js";
 
@@ -19,7 +20,7 @@ const CoursesEmployee = db.define('courses_employee', {
 }, {
     freezeTableName : true,
     hooks :{
-        beforeUpdate : (courses, options) => {
+        beforeUpdate : async(courses, options) => {
             if(courses.progress >= 100){
                 courses.progress = 100;
                 courses.status = 'Completed'
@@ -37,5 +38,9 @@ CoursesEmployee.belongsTo(Users, {
 CoursesEmployee.belongsTo(Courses, {
     foreignKey : 'course_id'
 });
+
+CoursesEmployee.hasOne(Certificate, {
+    foreignKey : 'course_employee_id'
+})
 
 export default CoursesEmployee;

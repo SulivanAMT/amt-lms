@@ -2,6 +2,7 @@ import { calculatePointQuestion, errMsg, getProgress, lower } from "../helper/He
 import { repoCheckQuizEmployee, repoCreateQuiz, repoCreateQuizQuestion, repoDeleteQuiz, repoDeleteQuizEmployeeAnswer, repoDeleteQuizQuestion, repoEnrollQuiz, repoGetMyQuiz, repoGetQuestionByQuizEmp, repoGetQuestionQuiz, repoGetQuestionQuizById, repoGetQuiz, repoGetQuizByCourse, repoGetQuizById, repoGetQuizEmpByQuiz, repoGetQuizEmployeeAnswer, repoGetQuizEmployeeById, repoGetResultQuiz, repoGetResultQuizByEmployee, repoGetResultQuizByOrg, repoQuizAnswerQuestion, repoSumPointByQuizEmp, repoUnEnrollQuiz, repoUpdateQuiz, repoUpdateQuizEmp, repoUpdateQuizQuestion } from "../repositories/QuizRepository.js";
 import moment from "moment";
 import { repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
+import { generateCertificate } from "./CourseController.js";
 
 export const createQuiz = async(req, res) => {
     try {
@@ -352,6 +353,9 @@ export const quizSubmitAnswer = async(req, res) => {
         await repoUpdateCourseEmployee({
             progress : quizEmployee.courses_employee.progress + progress
         }, quizEmployee.courses_employee.id);
+        if(quizEmployee.courses_employee.progress + progress >= 100) {
+            await generateCertificate(quizEmployee.courses_employee.id);
+        }
         return res.json({
             message : 'Quiz berhasil disubmit',
             is_error : false

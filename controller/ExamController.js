@@ -3,6 +3,7 @@ import { repoCheckExamEmployee, repoCreateExam, repoCreateExamQuestion, repoDele
 import moment from 'moment';
 import { repoGetCourseEmpById, repoUpdateCourseEmployee } from "../repositories/CourseRepository.js";
 import { repoGetLessonByCourse, repoGetLessonEmpByCourseEmp } from "../repositories/LessonRepository.js";
+import { generateCertificate } from "./CourseController.js";
 
 export const createExam = async(req, res) => {
     try {
@@ -376,6 +377,9 @@ export const examSubmitAnswer = async(req, res) => {
         await repoUpdateCourseEmployee({
             progress : examEmployee.courses_employee.progress + progress
         }, examEmployee.courses_employee.id);
+        if(examEmployee.courses_employee.progress + progress >= 100) {
+            await generateCertificate(examEmployee.courses_employee.id);
+        }
         return res.json({
             message : 'Ujian berhasil disubmit',
             is_error : false
